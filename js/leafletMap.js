@@ -8,6 +8,7 @@ class LeafletMap {
   constructor(_config, _data) {
     this.config = {
       parentElement: _config.parentElement,
+      colorScale: _config.colorScale,
     }
     this.data = _data;
     this.initVis();
@@ -51,6 +52,10 @@ class LeafletMap {
       layers: [vis.base_layer]
     });
 
+    vis.colorScale = d3.scaleOrdinal()
+        .range (this.config.colorScale.range())
+        .domain(this.config.colorScale.domain())
+
     //if you stopped here, you would just have a map
 
     //initialize svg for d3 to add to map
@@ -62,7 +67,7 @@ class LeafletMap {
     vis.Dots = vis.svg.selectAll('circle')
                     .data(vis.data) 
                     .join('circle')
-                        .attr("fill", "steelblue") 
+                        .attr("fill", d => vis.colorScale(d["SERVICE_CODE"])) 
                         .attr("stroke", "black")
                         //Leaflet has to take control of projecting points. Here we are feeding the latitude and longitude coordinates to
                         //leaflet so that it can project them on the coordinates of the view. Notice, we have to reverse lat and lon.
@@ -104,7 +109,7 @@ class LeafletMap {
                         .on('mouseleave', function() { //function to add mouseover event
                             d3.select(this).transition() //D3 selects the object we have moused over in order to perform operations on it
                               .duration('150') //how long we are transitioning between the two states (works like keyframes)
-                              .attr("fill", "steelblue") //change the fill
+                              .attr("fill", d => vis.colorScale(d["SERVICE_CODE"])) //change the fill
                               .attr('r', 3) //change radius
 
                             d3.select('#tooltip').style('opacity', 0);//turn off the tooltip
