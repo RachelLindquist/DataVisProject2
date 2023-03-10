@@ -81,8 +81,18 @@ class LeafletMap {
                                 .style('opacity', 1)
                                 .style('z-index', 1000000)
                                   // Format number with million and thousand separator
-                                  //we can change this later as we want
-                                .html(`<div class="tooltip-label">ID: ${d["SERVICE_REQUEST_ID"]}, status: ${d["STATUS"]}</div>`);
+                                  //This should include the date of the call, the updated date, 
+                                  //the public agency handling the call, the type of call and descriptive information.  
+                                  //Not sure what type of call means given the data, I've just put status instead for now.
+                                .html(`<div class="tooltip-label">
+                                  <ul style="list-style-type:none;">
+                                    <li>Date of call: ${d["REQUESTED_DATETIME"]}</li>
+                                    <li>Updated date: ${d["UPDATED_DATETIME"]}</li>
+                                    <li>Public Agency: ${d["AGENCY_RESPONSIBLE"]}</li>
+                                    <li>Status: ${d["STATUS"]}</li>
+                                    <li>Description: ${d["DESCRIPTION"]}</li>
+                                  </ul>
+                                </div>`);
 
                           })
                         .on('mousemove', (event) => {
