@@ -151,28 +151,19 @@ class LeafletMap {
   changeMap(prev, cur){
     let vis = this;
     //all these can be changed later to different map offerings
-    if (prev === 1){ //previously esri
-      if (cur === 2){ // currently topo
-        vis.theMap.addLayer(vis.topo_layer);
-        vis.theMap.removeLayer(vis.esri_layer);
-      }else { //currently st
-        vis.theMap.addLayer(vis.st_layer);
-        vis.theMap.removeLayer(vis.esri_layer);
-      }
-    } else if (prev === 2){ //previously topo
-      if (cur === 1){ //currently esri
+    if (prev != cur){
+      if (cur ===1){ //add new map layer
         vis.theMap.addLayer(vis.esri_layer);
-        vis.theMap.removeLayer(vis.topo_layer);
+      } else if (cur ===2){
+        vis.theMap.addLayer(vis.topo_layer);
       } else {
         vis.theMap.addLayer(vis.st_layer);
-        vis.theMap.removeLayer(vis.topo_layer);
       }
-    } else {
-      if (cur === 1){
-        vis.theMap.addLayer(vis.esri_layer);
-        vis.theMap.removeLayer(vis.st_layer);
+      if (prev === 1){ //remove map layer
+        vis.theMap.removeLayer(vis.esri_layer);
+      } else if (prev === 2){
+        vis.theMap.removeLayer(vis.topo_layer);
       } else {
-        vis.theMap.addLayer(vis.topo_layer);
         vis.theMap.removeLayer(vis.st_layer);
       }
     }

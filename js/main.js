@@ -6,6 +6,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
     console.log(data[0]);
     console.log(data.length);
     d3.select("#callT").classed('inactive', true);
+    d3.select("#st").classed('inactive', true);
 
     var data = data.filter(function(d){
       return d["LAST_TABLE_UPDATE"].length >= 1;
@@ -79,7 +80,38 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       } else { //pubA
         leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
       }
-      });
+    });
+
+    d3.selectAll(".map").on('click', function() {
+      // Toggle 'inactive' class
+      //get prev to remove later
+      let prev = 0;
+      if (d3.select("#esri").classed('inactive')){
+        prev = 1;
+      } else if (d3.select("#topo").classed('inactive')){
+        prev = 2;
+      } else {
+        prev = 3;
+      }
+      //remove inactive from everything
+      d3.select("#esri").classed('inactive', false);
+      d3.select("#topo").classed('inactive', false);
+      d3.select("#st").classed('inactive', false);
+      //except this
+      d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
+      
+      // Filter data accordingly and update vis
+      let esri = document.getElementById("esri");
+      let topo = document.getElementById("topo");
+      let st = document.getElementById("st");
+      if (esri.classList.contains('inactive')){
+        leafletMap.changeMap(prev, 1);
+      } else if (topo.classList.contains('inactive')){
+        leafletMap.changeMap(prev, 2);
+      } else{ //st
+        leafletMap.changeMap(prev, 3);
+      } 
+    });
 
 
   })
