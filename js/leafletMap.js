@@ -5,12 +5,13 @@ class LeafletMap {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data) {
+  constructor(_config, _data, _coloring) {
     this.config = {
       parentElement: _config.parentElement,
       colorScale: _config.colorScale,
     }
     this.data = _data;
+    this.coloring = _coloring;
     this.initVis();
   }
   
@@ -37,8 +38,18 @@ class LeafletMap {
     vis.stAttr = 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
     //this is the base map layer, where we are showing the map background
-    vis.base_layer = L.tileLayer(vis.stUrl, {
+    vis.esri_layer = L.tileLayer(vis.esriUrl, {
       id: 'esri-image',
+      attribution: vis.esriAttr,
+      ext: 'png'
+    });
+    vis.topo_layer = L.tileLayer(vis.topoUrl, {
+      id: 'topo-image',
+      attribution: vis.topoAttr,
+      ext: 'png'
+    });
+    vis.st_layer = L.tileLayer(vis.stUrl, {
+      id: 'st-image',
       attribution: vis.stAttr,
       ext: 'png'
     });
@@ -49,7 +60,7 @@ class LeafletMap {
       //This zooms in perfectly on cincinnati, thank you josh
       //center: [30,0],
       //zoom: 5,
-      layers: [vis.base_layer]
+      layers: [vis.st_layer]
     });
 
     vis.colorScale = d3.scaleOrdinal()
@@ -67,7 +78,7 @@ class LeafletMap {
     vis.Dots = vis.svg.selectAll('circle')
                     .data(vis.data) 
                     .join('circle')
-                        .attr("fill", d => vis.colorScale(d["SERVICE_CODE"])) 
+                        .attr("fill", d => vis.colorScale(d[vis.coloring])) 
                         .attr("stroke", "black")
                         //Leaflet has to take control of projecting points. Here we are feeding the latitude and longitude coordinates to
                         //leaflet so that it can project them on the coordinates of the view. Notice, we have to reverse lat and lon.
@@ -109,7 +120,7 @@ class LeafletMap {
                         .on('mouseleave', function() { //function to add mouseover event
                             d3.select(this).transition() //D3 selects the object we have moused over in order to perform operations on it
                               .duration('150') //how long we are transitioning between the two states (works like keyframes)
-                              .attr("fill", d => vis.colorScale(d["SERVICE_CODE"])) //change the fill
+                              .attr("fill", d => vis.colorScale(d[vis.coloring])) //change the fill
                               .attr('r', 3) //change radius
 
                             d3.select('#tooltip').style('opacity', 0);//turn off the tooltip
@@ -127,6 +138,14 @@ class LeafletMap {
       vis.updateVis();
     });
 
+  }
+
+  changeColors(colorsScale, _color){
+    this.colorScale = d3.scaleOrdinal()
+        .range (colorsScale.range())
+        .domain(colorsScale.domain());
+    this.coloring = _color;
+    this.updateVis();
   }
 
   updateVis() {
@@ -148,7 +167,9 @@ class LeafletMap {
     vis.Dots
       .attr("cx", d => vis.theMap.latLngToLayerPoint([d.latitude,d.longitude]).x)
       .attr("cy", d => vis.theMap.latLngToLayerPoint([d.latitude,d.longitude]).y)
-      .attr("r", vis.radiusSize) ;
+      .attr("r", vis.radiusSize)
+      .attr("fill", d => vis.colorScale(d[vis.coloring]));
+
 
   }
 

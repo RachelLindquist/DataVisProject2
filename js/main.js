@@ -35,7 +35,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
     let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
     const  cdColors= d3.scaleOrdinal()
     .domain(cdList)
-    .range(d3.quantize(d3.interpolateHcl("#fafa6e", "#2A4858"), cdList.length));
+    .range(d3.quantize(d3.interpolateHcl("#000000", "#ffffff"), cdList.length));
 
     //Public Agency 
     let paList = [...new Set(data.map(d => d["AGENCY_RESPONSIBLE"]))];
@@ -48,7 +48,9 @@ d3.tsv('data/Cincy311_2022_final.tsv')
     leafletMap = new LeafletMap({
       parentElement: '#my-map',
       colorScale: ctColors,
-    }, data);
+    }, data, "SERVICE_CODE");
+
+    //leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
 
 
   })
