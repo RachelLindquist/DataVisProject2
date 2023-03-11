@@ -3,15 +3,22 @@
 
 d3.tsv('data/Cincy311_2022_final.tsv')
 .then(data => {
-    console.log(data[0]);
-    console.log(data.length);
     d3.select("#callT").classed('inactive', true);
     d3.select("#st").classed('inactive', true);
 
+    //Note- some entries may not have GPS coordinates.  
+    //Don't eliminate these items altogether, 
+    //because they are part of the dataset and should be featured in the other charts.
+    //You could indicate somewhere within the visualization how many calls are not mapped. 
+    //^ handled by count
+    let count = data.length;
     var data = data.filter(function(d){
       return d["LAST_TABLE_UPDATE"].length >= 1;
     }); //removes poorly stored data that is missing columns
-    console.log(data.length);
+    count = count - data.length; //stores number of missing data, still need to display somewhere
+    document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
+
+
     data.forEach(d => {
       d.latitude = +d["LATITUDE"]; //make sure these are not strings
       d.longitude = +d["LONGITUDE"]; //make sure these are not strings
