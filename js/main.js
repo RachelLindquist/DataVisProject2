@@ -1,6 +1,3 @@
-
-
-
 d3.tsv('data/Cincy311_2022_final.tsv')
 .then(data => {
     d3.select("#callT").classed('inactive', true);
@@ -24,6 +21,10 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       d.longitude = +d["LONGITUDE"]; //make sure these are not strings
       //Add in process_time calculation instead of just 0
       d.process = +0;
+
+      //0 is sunday, 1 is monday...
+      let dt = (new Date(d["REQUESTED_DATE"])).getDay();
+      d.dayOfWeek = dt;
     });
 
     //Color by Call Type, Color by Process Time, Color by Call Date, Color by Public Agency
@@ -119,6 +120,21 @@ d3.tsv('data/Cincy311_2022_final.tsv')
         leafletMap.changeMap(prev, 3);
       } 
     });
+
+    // Bar chart #1:
+    
+    const colorScale1 = d3.scaleOrdinal()
+        .domain(['0', '1', '2', '3', '4', '5', '6'])
+        .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1']);
+
+        let barChart1 = new BarChart({
+        'parentElement': '#barChart1',
+        'colorScale' : colorScale1,
+        'containerHeight': 200,
+        'containerWidth': 400,
+        }, data, d.dayOfWeek, "Days of the week", false); 
+        barChart1.updateVis();
+
 
 
   })
