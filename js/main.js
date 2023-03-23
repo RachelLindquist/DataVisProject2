@@ -1,144 +1,282 @@
 
+let weekFilter = [];
+let codeFilter = [];
+let processFilter = [];
+let zipFilter = [];
+let data, leafletMap;
 
-
-d3.tsv('data/Cincy311_2022_final.tsv')
+d3.tsv('data/test.tsv')
 .then(data => {
-    d3.select("#callT").classed('inactive', true);
-    d3.select("#st").classed('inactive', true);
+  d3.select("#callT").classed('inactive', true);
+  d3.select("#st").classed('inactive', true);
 
-    //Note- some entries may not have GPS coordinates.  
-    //Don't eliminate these items altogether, 
-    //because they are part of the dataset and should be featured in the other charts.
-    //You could indicate somewhere within the visualization how many calls are not mapped. 
-    //^ handled by count
-    let count = data.length;
-    var data = data.filter(function(d){
-      return d["LAST_TABLE_UPDATE"].length >= 1;
-    }); //removes poorly stored data that is missing columns
-    count = count - data.length; //stores number of missing data, still need to display somewhere
-    document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
+  //Note- some entries may not have GPS coordinates.  
+  //Don't eliminate these items altogether, 
+  //because they are part of the dataset and should be featured in the other charts.
+  //You could indicate somewhere within the visualization how many calls are not mapped. 
+  //^ handled by count
+  let count = data.length;
+  var data = data.filter(function(d){
+    return d["LAST_TABLE_UPDATE"].length >= 1;
+  }); //removes poorly stored data that is missing columns
+  count = count - data.length; //stores number of missing data, still need to display somewhere
+  document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
 
 
-    data.forEach(d => {
-      d.latitude = +d["LATITUDE"]; //make sure these are not strings
-      d.longitude = +d["LONGITUDE"]; //make sure these are not strings
-      //Add in process_time calculation instead of just 0
-      let requestDate = new Date(d['REQUESTED_DATETIME']);
-      let updateDate = new Date(d ['UPDATED_DATETIME']);
-      let dif = requestDate.getTime() - updateDate.getTime();
-      d.process = dif/ (1000 * 3600 * 24);
-      //0 is sunday, 1 is monday...
-      let dt = (new Date(d["REQUESTED_DATE"])).getDay();
-      d.dayOfWeek = dt;
-      });
-      //Color by Call Type, Color by Process Time, Color by Call Date, Color by Public Agency
+  data.forEach(d => {
 
-      //Call Type
-    let ctList = [...new Set(data.map(d => d["SERVICE_CODE"]))];
-    const  ctColors= d3.scaleOrdinal()
-    .domain(ctList)
-    .range(d3.quantize(d3.interpolateHcl("#fafa6e", "#2A4858"), ctList.length));
+
+    d.latitude = +d["LATITUDE"]; //make sure these are not strings
+    d.longitude = +d["LONGITUDE"]; //make sure these are not strings
     
-    //Process Time
-    let ptList = [...new Set(data.map(d => d.process))];
-    const  ptColors= d3.scaleOrdinal()
-    .domain(ptList)
-    .range(d3.quantize(d3.interpolateHcl("#ff0000", "#00ff00"), ptList.length));
 
-    //Call Date
-    let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
-    const  cdColors= d3.scaleOrdinal()
-    .domain(cdList)
-    .range(d3.quantize(d3.interpolateHcl("#000000", "#ffffff"), cdList.length));
+    //Add in process_time calculation instead of just 0
+    let requestDate = new Date(d['REQUESTED_DATETIME']); // force proper dates instead of weird string vals
+    let updateDate = new Date(d ['UPDATED_DATETIME']); // force proper dates instead of weird string vals
+    let dif = requestDate.getTime() - updateDate.getTime();
 
-    //Public Agency 
-    let paList = [...new Set(data.map(d => d["AGENCY_RESPONSIBLE"]))];
-    const  paColors= d3.scaleOrdinal()
-    .domain(paList)
-    .range(d3.quantize(d3.interpolateHcl("#0000ff", "#f0000f"), paList.length));
+    d.process = dif/ (1000 * 3600 * 24);
+
+    //0 is sunday, 1 is monday...
+    let dt = (new Date(d["REQUESTED_DATE"])).getDay();
+    d.dayOfWeek = dt;
+
+
+    });
+    // console.log(data[0].dayOfWeek);
+    
+    //Color by Call Type, Color by Process Time, Color by Call Date, Color by Public Agency
+
+    //Call Type
+  let ctList = [...new Set(data.map(d => d["SERVICE_CODE"]))];
+  const  ctColors= d3.scaleOrdinal()
+  .domain(ctList)
+  .range(d3.quantize(d3.interpolateHcl("#fafa6e", "#2A4858"), ctList.length));
   
+  //Process Time
+  let ptList = [...new Set(data.map(d => d.process))];
+  const  ptColors= d3.scaleOrdinal()
+  .domain(ptList)
+  .range(d3.quantize(d3.interpolateHcl("#ff0000", "#00ff00"), ptList.length));
 
-    // Initialize chart and then show it
-    leafletMap = new LeafletMap({
-      parentElement: '#my-map',
-      colorScale: ctColors,
-    }, data, "SERVICE_CODE");
+  //Call Date
+  let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
+  const  cdColors= d3.scaleOrdinal()
+  .domain(cdList)
+  .range(d3.quantize(d3.interpolateHcl("#000000", "#ffffff"), cdList.length));
 
-    //leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
-    //leafletMap.changeMap(3, 2);
+  //Public Agency 
+  let paList = [...new Set(data.map(d => d["AGENCY_RESPONSIBLE"]))];
+  const  paColors= d3.scaleOrdinal()
+  .domain(paList)
+  .range(d3.quantize(d3.interpolateHcl("#0000ff", "#f0000f"), paList.length));
 
 
-    d3.selectAll(".color").on('click', function() {
-      // Toggle 'inactive' class
-      //remove inactive from everything
-      d3.select("#callT").classed('inactive', false);
-      d3.select("#procT").classed('inactive', false);
-      d3.select("#callD").classed('inactive', false);
-      d3.select("#pubA").classed('inactive', false);
-      //except this
-      d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
-      
-      // Filter data accordingly and update vis
-      let callT = document.getElementById("callT");
-      let procT = document.getElementById("procT");
-      let callD = document.getElementById("callD");
-      let pubA = document.getElementById("pubA");
-      if (callT.classList.contains('inactive')){
-        leafletMap.changeColors(ctColors, "SERVICE_CODE");
-      } else if (procT.classList.contains('inactive')){
-        leafletMap.changeColors(ptColors, "process");
-      } else if (callD.classList.contains('inactive')){
-        leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
-      } else { //pubA
-        leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
-      }
-    });
+  // Initialize chart and then show it
+  leafletMap = new LeafletMap({
+    parentElement: '#my-map',
+    colorScale: ctColors,
+  }, data, "SERVICE_CODE");
 
-    d3.selectAll(".map").on('click', function() {
-      // Toggle 'inactive' class
-      //get prev to remove later
-      let prev = 0;
-      if (d3.select("#esri").classed('inactive')){
-        prev = 1;
-      } else if (d3.select("#topo").classed('inactive')){
-        prev = 2;
-      } else {
-        prev = 3;
-      }
-      //remove inactive from everything
-      d3.select("#esri").classed('inactive', false);
-      d3.select("#topo").classed('inactive', false);
-      d3.select("#st").classed('inactive', false);
-      //except this
-      d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
-      
-      // Filter data accordingly and update vis
-      let esri = document.getElementById("esri");
-      let topo = document.getElementById("topo");
-      let st = document.getElementById("st");
-      if (esri.classList.contains('inactive')){
-        leafletMap.changeMap(prev, 1);
-      } else if (topo.classList.contains('inactive')){
-        leafletMap.changeMap(prev, 2);
-      } else{ //st
-        leafletMap.changeMap(prev, 3);
-      } 
-    });
+  //leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
+  //leafletMap.changeMap(3, 2);
 
-    // Bar chart #1:
+
+  d3.selectAll(".color").on('click', function() {
+    // Toggle 'inactive' class
+    //remove inactive from everything
+    d3.select("#callT").classed('inactive', false);
+    d3.select("#procT").classed('inactive', false);
+    d3.select("#callD").classed('inactive', false);
+    d3.select("#pubA").classed('inactive', false);
+    //except this
+    d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
     
-    const colorScale1 = d3.scaleOrdinal()
-        .domain(['0', '1', '2', '3', '4', '5', '6'])
-        .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1']);
+    // Filter data accordingly and update vis
+    let callT = document.getElementById("callT");
+    let procT = document.getElementById("procT");
+    let callD = document.getElementById("callD");
+    let pubA = document.getElementById("pubA");
+    if (callT.classList.contains('inactive')){
+      leafletMap.changeColors(ctColors, "SERVICE_CODE");
+    } else if (procT.classList.contains('inactive')){
+      leafletMap.changeColors(ptColors, "process");
+    } else if (callD.classList.contains('inactive')){
+      leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
+    } else { //pubA
+      leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
+    }
+  });
 
-        let barChart1 = new BarChart({
-        'parentElement': '#barChart1',
-        'colorScale' : colorScale1,
-        'containerHeight': 200,
-        'containerWidth': 400,
-        }, data, data.dayOfWeek, "Days of the week", false); 
-        barChart1.updateVis();
+  d3.selectAll(".map").on('click', function() {
+    // Toggle 'inactive' class
+    //get prev to remove later
+    let prev = 0;
+    if (d3.select("#esri").classed('inactive')){
+      prev = 1;
+    } else if (d3.select("#topo").classed('inactive')){
+      prev = 2;
+    } else {
+      prev = 3;
+    }
+    //remove inactive from everything
+    d3.select("#esri").classed('inactive', false);
+    d3.select("#topo").classed('inactive', false);
+    d3.select("#st").classed('inactive', false);
+    //except this
+    d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
+    
+    // Filter data accordingly and update vis
+    let esri = document.getElementById("esri");
+    let topo = document.getElementById("topo");
+    let st = document.getElementById("st");
+    if (esri.classList.contains('inactive')){
+      leafletMap.changeMap(prev, 1);
+    } else if (topo.classList.contains('inactive')){
+      leafletMap.changeMap(prev, 2);
+    } else{ //st
+      leafletMap.changeMap(prev, 3);
+    } 
+  });
+
+  // Timeline
+
+  var lineData = [];
+  // [[__date__,__timesOccured__],[__date__,__timesOccured__],[__date__,__timesOccured__],]
+  
+  // push all request dates to lineData array
+  // for i in all data
+  // lineData.push(requestDate)
+
+  // sort dates
+  //lineData.sort(function(a,b){
+    //return new Date(b) - new Date(a);
+  //});
+  
+  
+  // let timeline = new LineChart({
+	// 	'parentElement': '#lineChart',
+	// 	'containerHeight': 300,
+	// 	'containerWidth': 400,
+	// }, lineData, 'Date', 'Number of calls', 'Timeline');
+	// timeline.updateVis();
+
+  // Bar chart #1:
+  
+  const colorScale1 = d3.scaleOrdinal()
+      .domain(['0', '1', '2', '3', '4', '5', '6'])
+      .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1']);
+
+  //     let barChart1 = new BarChart({
+  //     'parentElement': '#barChart1',
+  //     'colorScale' : colorScale1,
+  //     'containerHeight': 200,
+  //     'containerWidth': 400,
+  //     }, data, data.dayOfWeek, "Days of the week", false); 
+  //     barChart1.updateVis();
+
+      let heightitem = 200;
+      let widthitem = 400;
+      
+
+      // Day of the week visualization- bar chart
+      dayChart = new Barchart({
+          'parentElement': '#daybar',
+          'containerHeight': heightitem,
+          'containerWidth': widthitem,
+          // 'reverseOrder': true,
+          // 'yScaleLog': false
+          'colors' : colorScale1
+          }, getDayOWeek(data), "Days of the Week", true,"Day","Amount",data); 
+      dayChart.updateVis();
+
+          
+  // Major categories (service code) visualization – bar chart
+      serviceChart = new Barchart({
+        'parentElement': '#servicebar',
+        'containerHeight': heightitem,
+        'containerWidth': widthitem,
+        // 'reverseOrder': true,
+        // 'yScaleLog': false
+        'colors' : colorScale1
+        }, getNumberOfThings(data,"SERVICE_CODE"), "Major Categories", true,"Service Code","Times Called",data); 
+    serviceChart.updateVis();
+      
+    // Visualization showing number of calls by zip code- bar chart
+    zipChart = new Barchart({
+      'parentElement': '#zipbar',
+      'containerHeight': heightitem,
+      'containerWidth': widthitem,
+      // 'reverseOrder': true,
+      // 'yScaleLog': false
+      'colors' : colorScale1
+      }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
+  zipChart.updateVis();
+  
+  // Extra bar chart focusing on descriptions – showcasing common descriptions
+
+})
+//.catch(error => console.error(error));
 
 
+//filter function for each item we plan on filtering
+//needs to be tested and implented in barchart
+//only works for map data currently, will add more values after testing
+function filterData(workingData){
+  leafletMap.data = workingData;
+  if (weekFilter.length != 0) {
+    leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
+  }
+  /*
+  if (codeFilter.length == 0) {
+    leafletMap.data = data;
+  } else {
+    leafletMap.data = data.filter(d => codeFilter.includes(d["SERVICE_CODE"]));
+  }
+  if (processFilter.length == 0) {
+    leafletMap.data = data;
+  } else {
+    leafletMap.data = data.filter(d => processFilter.includes(d.process));
+  }
+  if (zipFilter.length == 0) {
+    leafletMap.data = data;
+  } else {
+    leafletMap.data = data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+  } */
+  leafletMap.updateVis();
+}
+
+
+
+
+
+function getNumberOfThings(data_base, indx) {
+  let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
+  //   console.log(vis.data)
+  data1 = data1.sort((a,b) => {
+      return a[0] - b[0];
+    });
+
+  return(data1)
+}
+
+function getDayOWeek(data_base) {
+  let totalp = {'Sunday':0, 'Monday':0, 'Tusday':0, 'Wednesday':0, 'Thursday':0, 'Friday':0, 'Saturday':0, 'Missing': 0};
+  let weekday = ["Sunday", "Monday", "Tusday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  data_base.forEach(d => {
+      totalp[weekday[d.dayOfWeek]] += 1;
   })
-  //.catch(error => console.error(error));
+  
+  let data1 = dicToArr(totalp);
+  return(data1);
+}
+
+function dicToArr(totalp) {
+  // this is lazy coding but i needed to do it quickly so
+  let data1 = [];
+  for (let tp in totalp){
+      data1.push([tp,totalp[tp]]);
+  }
+  return(data1);
+}
