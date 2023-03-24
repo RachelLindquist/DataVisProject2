@@ -96,20 +96,18 @@ class Barchart {
     updateVis() {
       let vis = this;
 
-    //   vis.data = d3.rollups(vis.data, g => g.length, d => d[vis.id]);
-    // //   console.log(vis.data)
-
-    //   vis.data = vis.data.sort((a,b) => {
-    //     return a[0] - b[0];
-    //   });
   
       // Reverse column order depending on user selection
       if (vis.config.reverseOrder) {
         vis.data.reverse();
       }
+
+      if (vis.data.length > 13) {
+        vis.data = vis.data.slice(0,12);
+      }
   
       // Specificy x- and y-accessor functions
-      console.log(vis.data);
+    //   console.log(vis.data);
       vis.xValue = d => d[0];
       vis.yValue = d => d[1];
       vis.colorValue = d => vis.colors(d[0]);
@@ -214,8 +212,40 @@ class Barchart {
                     d3.select(event.currentTarget).style("stroke", "#ffffff");
                     //^CSS, change as we see fit
                 }
-                filterData(vis.ALLDATA);
             }
+
+// let processFilter = [];
+// let zipFilter = [];
+            // "Calls By Zipcode"
+            else if (vis.title == "Major Categories"){
+                //already has wednesday
+                const isActive = codeFilter.includes(d[0]);
+                if (isActive) {
+                    //weekday.findIndex(d[0])
+                    codeFilter = codeFilter.filter(f => f !== d[0]); // Remove from filter
+                    d3.select(event.currentTarget).style("stroke", "none");
+                    //^CSS, change as we see fit
+                } else {
+                    codeFilter.push(d[0]); // Add to filter
+                    d3.select(event.currentTarget).style("stroke", "#ffffff");
+                    //^CSS, change as we see fit
+                }
+            }
+
+            else if (vis.title == "Calls By Zipcode"){
+                const isActive = zipFilter.includes(d[0]);
+                if (isActive) {
+                    zipFilter = zipFilter.filter(f => f !== d[0]); // Remove from filter
+                    d3.select(event.currentTarget).style("fill", "#ffffff");
+                    //^CSS, change as we see fit
+                } else {
+                    zipFilter.push(d[0]); // Add to filter
+                    d3.select(event.currentTarget).style("fill", "#000000");
+                    //^CSS, change as we see fit
+                }
+            }
+
+            filterData(vis.ALLDATA);
             //const isActiveWeek = weekFilter.includes(d.key);
             //const isActiveCode = codeFilter.includes();
             //const isActiveProcess = processFilter.includes();

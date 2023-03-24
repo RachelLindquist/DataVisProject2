@@ -5,7 +5,8 @@ let processFilter = [];
 let zipFilter = [];
 let data, leafletMap;
 
-d3.tsv('data/test.tsv')
+// d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(data => {
   d3.select("#callT").classed('inactive', true);
   d3.select("#st").classed('inactive', true);
@@ -196,7 +197,7 @@ d3.tsv('data/test.tsv')
         'parentElement': '#servicebar',
         'containerHeight': heightitem,
         'containerWidth': widthitem,
-        // 'reverseOrder': true,
+        'reverseOrder': true,
         // 'yScaleLog': false
         'colors' : colorScale1
         }, getNumberOfThings(data,"SERVICE_CODE"), "Major Categories", true,"Service Code","Times Called",data); 
@@ -207,7 +208,7 @@ d3.tsv('data/test.tsv')
       'parentElement': '#zipbar',
       'containerHeight': heightitem,
       'containerWidth': widthitem,
-      // 'reverseOrder': true,
+      'reverseOrder': true,
       // 'yScaleLog': false
       'colors' : colorScale1
       }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
@@ -225,24 +226,30 @@ d3.tsv('data/test.tsv')
 function filterData(workingData){
   leafletMap.data = workingData;
   if (weekFilter.length != 0) {
+    console.log("Sorting Data by Week")
     leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
   }
-  /*
-  if (codeFilter.length == 0) {
-    leafletMap.data = data;
-  } else {
-    leafletMap.data = data.filter(d => codeFilter.includes(d["SERVICE_CODE"]));
+//   /*
+  if (codeFilter.length != 0) {
+    console.log("Sorting Data by Service Code")
+    leafletMap.data = leafletMap.data.filter(d => codeFilter.includes(d["SERVICE_CODE"]));
   }
-  if (processFilter.length == 0) {
-    leafletMap.data = data;
-  } else {
-    leafletMap.data = data.filter(d => processFilter.includes(d.process));
+  if (zipFilter.length != 0) {
+    console.log("Sorting Data by Zipcode")
+    leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
   }
-  if (zipFilter.length == 0) {
-    leafletMap.data = data;
-  } else {
-    leafletMap.data = data.filter(d => zipFilter.includes(d["ZIPCODE"]));
-  } */
+
+//   if (processFilter.length == 0) {
+//     leafletMap.data = data;
+//   } else {
+//     leafletMap.data = data.filter(d => processFilter.includes(d.process));
+//   }
+//   if (zipFilter.length == 0) {
+//     leafletMap.data = data;
+//   } else {
+//     leafletMap.data = data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+//   } 
+//   */
   leafletMap.updateVis();
 }
 
@@ -254,14 +261,14 @@ function getNumberOfThings(data_base, indx) {
   let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
   //   console.log(vis.data)
   data1 = data1.sort((a,b) => {
-      return a[0] - b[0];
+      return a[1] - b[1];
     });
 
   return(data1)
 }
 
 function getDayOWeek(data_base) {
-  let totalp = {'Sunday':0, 'Monday':0, 'Tusday':0, 'Wednesday':0, 'Thursday':0, 'Friday':0, 'Saturday':0, 'Missing': 0};
+  let totalp = {'Sunday':0, 'Monday':0, 'Tusday':0, 'Wednesday':0, 'Thursday':0, 'Friday':0, 'Saturday':0};
   let weekday = ["Sunday", "Monday", "Tusday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
   data_base.forEach(d => {
