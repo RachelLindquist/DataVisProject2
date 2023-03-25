@@ -3,9 +3,11 @@ let weekFilter = [];
 let serviceFilter = [];
 let zipFilter = [];
 let data, leafletMap;
+let zipChart, dayChart, serviceChart;
 
 d3.tsv('data/test.tsv')
-.then(data => {
+.then(_data => {
+  data =_data;
   d3.select("#callT").classed('inactive', true);
   d3.select("#st").classed('inactive', true);
 
@@ -219,24 +221,22 @@ d3.tsv('data/test.tsv')
 
 
 //filter function for each item we plan on filtering
-//needs to be tested and implented in barchart
-//only works for map data currently, will add more values after testing
 function filterData(workingData){
   leafletMap.data = workingData;
-  dayChart.data = workingData;
-  serviceChart.data = workingData;
-  zipChart.data =workingData;
+  dayChart.data = getDayOWeek(workingData);
+  serviceChart.data = getNumberOfThings(workingData,"SERVICE_CODE");
+  zipChart.data =getNumberOfThings(workingData,"ZIPCODE");
   //dayChart filtering
   if (weekFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
-    serviceChart.data = serviceChart.data.filter(d => weekFilter.includes(d.dayOfWeek));
-    zipChart.data = zipChart.data.filter(d => weekFilter.includes(d.dayOfWeek));
+    serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"SERVICE_CODE");
+    zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"ZIPCODE");
   }
   //serviceChart filtering
   if (serviceFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
-    dayChart.data = dayChart.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
-    zipChart.data = zipChart.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
+    dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])));
+    zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])), "ZIPCODE");
   }
   /*
   if (processFilter.length == 0) {
@@ -247,12 +247,20 @@ function filterData(workingData){
   //zipChart
   if (zipFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
-    dayChart.data = dayChart.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
-    serviceChart.data = serviceChart.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+    dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])));
+    serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])),"SERVICE_CODE");
   }
   leafletMap.updateVis();
-  //barcharts dont update correctly
-  //just removes all data for some reason
+  //if used for filtering, make it unfiltered
+  if (weekFilter.length != 0){
+    dayChart.data = getDayOWeek(workingData);
+  }
+  if (serviceFilter.length != 0){
+    serviceChart.data = getNumberOfThings(workingData,"SERVICE_CODE");
+  }
+  if (zipFilter.length != 0){
+    zipChart.data =getNumberOfThings(workingData,"ZIPCODE");
+  }
   dayChart.updateVis();
   serviceChart.updateVis();
   zipChart.updateVis();
@@ -263,6 +271,7 @@ function filterData(workingData){
 
 
 function getNumberOfThings(data_base, indx) {
+  console.log(data);
   let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
   //   console.log(vis.data)
   data1 = data1.sort((a,b) => {
