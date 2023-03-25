@@ -1,7 +1,6 @@
 
 let weekFilter = [];
-let codeFilter = [];
-let processFilter = [];
+let serviceFilter = [];
 let zipFilter = [];
 let data, leafletMap;
 
@@ -224,26 +223,39 @@ d3.tsv('data/test.tsv')
 //only works for map data currently, will add more values after testing
 function filterData(workingData){
   leafletMap.data = workingData;
+  dayChart.data = workingData;
+  serviceChart.data = workingData;
+  zipChart.data =workingData;
+  //dayChart filtering
   if (weekFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
+    serviceChart.data = serviceChart.data.filter(d => weekFilter.includes(d.dayOfWeek));
+    zipChart.data = zipChart.data.filter(d => weekFilter.includes(d.dayOfWeek));
+  }
+  //serviceChart filtering
+  if (serviceFilter.length != 0) {
+    leafletMap.data = leafletMap.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
+    dayChart.data = dayChart.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
+    zipChart.data = zipChart.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
   }
   /*
-  if (codeFilter.length == 0) {
-    leafletMap.data = data;
-  } else {
-    leafletMap.data = data.filter(d => codeFilter.includes(d["SERVICE_CODE"]));
-  }
   if (processFilter.length == 0) {
     leafletMap.data = data;
   } else {
     leafletMap.data = data.filter(d => processFilter.includes(d.process));
-  }
-  if (zipFilter.length == 0) {
-    leafletMap.data = data;
-  } else {
-    leafletMap.data = data.filter(d => zipFilter.includes(d["ZIPCODE"]));
   } */
+  //zipChart
+  if (zipFilter.length != 0) {
+    leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+    dayChart.data = dayChart.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+    serviceChart.data = serviceChart.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
+  }
   leafletMap.updateVis();
+  //barcharts dont update correctly
+  //just removes all data for some reason
+  dayChart.updateVis();
+  serviceChart.updateVis();
+  zipChart.updateVis();
 }
 
 
