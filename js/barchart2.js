@@ -40,9 +40,9 @@ class Barchart {
 
     //   console.log(this.config.colors)
     //   if (!isNaN(this.config.colors)) {
-    vis.colors = d3.scaleOrdinal()
+    /*vis.colors = d3.scaleOrdinal()
         .range (this.config.colors.range())
-        .domain(this.config.colors.domain())
+        .domain(this.config.colors.domain()) */
     //   }
   
       // Initialize scales and axes
@@ -105,6 +105,11 @@ class Barchart {
       if (vis.data.length > 13) {
         vis.data = vis.data.slice(0,12);
       }
+
+      let serviceList = [...new Set(vis.data.map(d => d[0]))];
+      vis.colors = d3.scaleOrdinal()
+        .domain(serviceList)
+        .range(d3.quantize(d3.interpolateHcl(vis.config.colors[0], vis.config.colors[1]), serviceList.length));
   
       // Specificy x- and y-accessor functions
     //   console.log(vis.data);
@@ -210,7 +215,7 @@ class Barchart {
                     //^CSS, change as we see fit
                 } else {
                     weekFilter.push(weekday.indexOf(d[0])); // Add to filter
-                    d3.select(event.currentTarget).style("stroke", "#ffffff");
+                    d3.select(event.currentTarget).style("stroke", "#000000").style("stroke-width", 3);
                     //^CSS, change as we see fit
                 }
 
@@ -229,7 +234,7 @@ class Barchart {
                     //^CSS, change as we see fit
                 } else {
                     codeFilter.push(d[0]); // Add to filter
-                    d3.select(event.currentTarget).style("stroke", "#ffffff");
+                    d3.select(event.currentTarget).style("stroke", "#000000").style("stroke-width", 3);
                     //^CSS, change as we see fit
                 }
             }
@@ -238,11 +243,11 @@ class Barchart {
                 const isActive = zipFilter.includes(d[0]);
                 if (isActive) {
                     zipFilter = zipFilter.filter(f => f !== d[0]); // Remove from filter
-                    d3.select(event.currentTarget).style("fill", "#ffffff");
+                    d3.select(event.currentTarget).style("stroke", "none");
                     //^CSS, change as we see fit
                 } else {
                     zipFilter.push(d[0]); // Add to filter
-                    d3.select(event.currentTarget).style("fill", "#000000");
+                    d3.select(event.currentTarget).style("stroke", "#000000").style("stroke-width", 3);
                     //^CSS, change as we see fit
                 }
             }
