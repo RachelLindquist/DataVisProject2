@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-// d3.tsv('data/test.tsv')
-d3.tsv('data/Cincy311_2022_final.tsv')
+d3.tsv('data/test.tsv')
+// d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -35,9 +35,10 @@ d3.tsv('data/Cincy311_2022_final.tsv')
     //Add in process_time calculation instead of just 0
     let requestDate = new Date(d['REQUESTED_DATETIME']); // force proper dates instead of weird string vals
     let updateDate = new Date(d ['UPDATED_DATETIME']); // force proper dates instead of weird string vals
-    let dif = requestDate.getTime() - updateDate.getTime();
+    let dif = updateDate.getTime() - requestDate.getTime();
 
     d.process = dif/ (1000 * 3600 * 24);
+    d.request = requestDate.toLocaleString().split(',')[0];
 
     //0 is sunday, 1 is monday...
     let dt = (new Date(d["REQUESTED_DATE"])).getDay();
@@ -169,13 +170,6 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       .domain(['0', '1', '2', '3', '4', '5', '6'])
       .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1']);
 
-  //     let barChart1 = new BarChart({
-  //     'parentElement': '#barChart1',
-  //     'colorScale' : colorScale1,
-  //     'containerHeight': 200,
-  //     'containerWidth': 400,
-  //     }, data, data.dayOfWeek, "Days of the week", false); 
-  //     barChart1.updateVis();
 
       let heightitem = 200;
       let widthitem = 400;
@@ -194,7 +188,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
           
   // Major categories (service code) visualization – bar chart
-      serviceChart = new Barchart({
+    serviceChart = new Barchart({
         'parentElement': '#servicebar',
         'containerHeight': heightitem,
         'containerWidth': widthitem,
@@ -213,7 +207,15 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       // 'yScaleLog': false
       'colors' : colorScale1
       }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
-  zipChart.updateVis();
+    zipChart.updateVis();
+
+
+    scatterplot = new Scatterplot({ 
+        'parentElement': '#scatterplot',
+        'containerHeight': heightitem,
+        'containerWidth': widthitem*2,
+        }, getMassRad(data), 'Recived vs Updated', "Recived", "Process time");
+    scatterplot.updateVis();
   
   // Extra bar chart focusing on descriptions – showcasing common descriptions
 
@@ -307,4 +309,22 @@ function dicToArr(totalp) {
       data1.push([tp,totalp[tp]]);
   }
   return(data1);
+}
+
+
+function getMassRad(data_base) {
+
+    let colorScale = d3.scaleOrdinal()
+        .range(['#0abdc6','#0F7EA1','#133e7c'])
+        .domain([0, d3.max(data_base, data_base.process)]);
+
+    let data = [];
+
+    data_base.forEach(d => {
+        if (d.StellarRadius != 0 && d.StellarMass != 0) {
+            data.push({"name": d['SERVICE_NAME'],'label':'', 'request':d.request, 'processtime':d.process, 'color':colorScale(d.Distance), 'code':d['SERVICE_CODE']})
+        }
+    })
+
+    return(data);
 }
