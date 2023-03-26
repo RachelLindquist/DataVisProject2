@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-d3.tsv('data/test.tsv')
-// d3.tsv('data/Cincy311_2022_final.tsv')
+//d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -38,7 +38,7 @@ d3.tsv('data/test.tsv')
     let dif = updateDate.getTime() - requestDate.getTime();
 
     d.process = dif/ (1000 * 3600 * 24);
-    d.request = requestDate.toLocaleString().split(',')[0];
+    d.request = new Date (requestDate.toLocaleString().split(',')[0]);
 
     //0 is sunday, 1 is monday...
     let dt = (new Date(d["REQUESTED_DATE"])).getDay();
@@ -231,7 +231,6 @@ function filterData(workingData){
   zipChart.data =getNumberOfThings(workingData,"ZIPCODE");
   //dayChart filtering
   if (weekFilter.length != 0) {
-    console.log("Sorting Data by Week")
     leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
     serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"SERVICE_CODE");
     zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"ZIPCODE");
@@ -239,7 +238,6 @@ function filterData(workingData){
 
   //serviceChart filtering
   if (serviceFilter.length != 0) {
-    console.log("Sorting Data by Service Code")
     leafletMap.data = leafletMap.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
     dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])));
     zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])), "ZIPCODE");
@@ -252,7 +250,6 @@ function filterData(workingData){
   } */
   //zipChart
   if (zipFilter.length != 0) {
-    console.log("Sorting Data by Zipcode")
     leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
     dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])));
     serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])),"SERVICE_CODE");

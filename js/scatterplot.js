@@ -137,10 +137,10 @@ class Scatterplot {
     
     // Specificy accessor functions
     // vis.colorValue = d => d.distance;
+    //ensure d.request is a date
+    //vis.xValue = d => new Date(d.request);
     vis.xValue = d => d.request;
     vis.yValue = d => d.processtime;
-
-    console.log(vis.yValue);
 
     // Set the scale input domains
     vis.xScale.domain([d3.min(vis.data, vis.xValue), d3.max(vis.data, vis.xValue)]);
