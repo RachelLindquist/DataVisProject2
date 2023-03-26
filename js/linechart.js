@@ -19,7 +19,16 @@ class LineChart {
 	 * Initialize scales/axes and append static elements, such as axis titles
 	 */
     initVis() {
-      let vis = this; 
+      let vis = this;
+      let dates, lineData;
+      console.log(this.data);
+
+      //convert strings to dates
+      // this.data.forEach(d => {
+      //   dates = new Date(d[0]);
+      //   lineData = dates.sort((a, b) => b - a);
+
+      // });
     
       // Calculate inner chart size. Margin specifies the space around the actual chart.
       vis.width = vis.config.containerWidth - vis.config.margin.left - vis.config.margin.right;
@@ -40,7 +49,7 @@ class LineChart {
           .ticks(6)
           .tickSizeOuter(0)
           .tickPadding(10)
-          .tickFormat(d => d);
+          .tickFormat(d => d[1]);
   
       vis.yAxis = d3.axisLeft(vis.yScale);
   
@@ -48,9 +57,9 @@ class LineChart {
        vis.svg = d3.select(vis.config.parentElement)
        .attr('width', vis.config.containerWidth)
        .attr('height', vis.config.containerHeight);
-  
-      vis.xValue = d => d.date;
-      vis.yValue = d => d.count;
+
+      vis.xValue = lineData;
+      vis.yValue = d => d[1];
   
       vis.area = d3.area()
           .x(d => vis.xScale(vis.xValue(d)))
@@ -66,7 +75,7 @@ class LineChart {
       vis.yScale.domain(d3.extent(vis.data, vis.yValue));
 
       // Append both axis titles
-      vis.chart.append('text')
+      vis.svg.append('text')
             .attr('class', 'axis-title')
             .attr('y', vis.height)
             .attr('x', vis.width + 10)
@@ -114,14 +123,6 @@ class LineChart {
        .attr('d', vis.line)
        .style ("stroke", "#2e4482")
        .style('fill', 'none');
-  
-       vis.chart.append('text')
-       .attr('class', 'axis-title')
-       .attr('x', -20)
-       .attr('y', -20)
-       .attr('dy', '.71em')
-       .style('fill', 'black')
-       .text(this.title);
   
        vis.marks = vis.chart.append('g');
        vis.trackingArea = vis.chart.append('rect')
@@ -171,15 +172,15 @@ class LineChart {
             const index = vis.bisectDate(vis.data, date, 1);
             const a = vis.data[index - 1];
             const b = vis.data[index];
-            const d = b && (date - a.date > b.date- date) ? b : a; 
+            const d = b && (date - a.year > b.year- date) ? b : a; 
   
             // Update tooltip
             vis.tooltip.select('circle')
                 .style('fill', 'black')
-                .attr('transform', `translate(${vis.xScale(d.date)},${vis.yScale(d.count)})`);
+                .attr('transform', `translate(${vis.xScale(d.year)},${vis.yScale(d.count)})`);
             
             vis.tooltip.select('text')
-                .attr('transform', `translate(${vis.xScale(d.date)},${(vis.yScale(d.count) - 15)})`)
+                .attr('transform', `translate(${vis.xScale(d.year)},${(vis.yScale(d.count) - 15)})`)
                 .style('fill', 'black')
                 .text(Math.round(d.count));
           });

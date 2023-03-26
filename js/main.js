@@ -142,27 +142,13 @@ d3.tsv('data/Cincy311_2022_final.tsv')
     } 
   });
 
-  // Timeline
-
-  var lineData = [];
-  // [[__date__,__timesOccured__],[__date__,__timesOccured__],[__date__,__timesOccured__],]
-  
-  // push all request dates to lineData array
-  // for i in all data
-  // lineData.push(requestDate)
-
-  // sort dates
-  //lineData.sort(function(a,b){
-    //return new Date(b) - new Date(a);
-  //});
-  
-  
-  // let timeline = new LineChart({
-	// 	'parentElement': '#lineChart',
-	// 	'containerHeight': 300,
-	// 	'containerWidth': 400,
-	// }, lineData, 'Date', 'Number of calls', 'Timeline');
-	// timeline.updateVis();
+  // Timeline  
+  let timeline = new LineChart({
+		'parentElement': '#linechart',
+		'containerHeight': 300,
+		'containerWidth': 400,
+	}, getNumberOfThings(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
+	timeline.updateVis();
 
   // Bar chart #1:
 
