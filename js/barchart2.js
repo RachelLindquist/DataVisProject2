@@ -194,10 +194,11 @@ class Barchart {
           bars.on('click', function(event, d) {
             //let fil = d.title + "," + d.key;
             //const isActive = filter.includes(fil);
-            /* let weekFilter = [];
-                let codeFilter = [];
-                let processFilter = [];
-                let zipFilter = []; */
+            /* 
+            let weekFilter = [];
+            let serviceFilter = [];
+            let zipFilter = [];
+            */
             let weekday = ["Sunday", "Monday", "Tusday", "Wednesday", "Thursday", "Friday", "Saturday"];
             if (vis.title == "Days of the Week"){
                 //already has wednesday
@@ -212,6 +213,7 @@ class Barchart {
                     d3.select(event.currentTarget).style("stroke", "#ffffff");
                     //^CSS, change as we see fit
                 }
+
             }
 
 // let processFilter = [];
@@ -246,20 +248,6 @@ class Barchart {
             }
 
             filterData(vis.ALLDATA);
-            //const isActiveWeek = weekFilter.includes(d.key);
-            //const isActiveCode = codeFilter.includes();
-            //const isActiveProcess = processFilter.includes();
-            //const isActiveZip = zipFilter.includes();
-            /*
-            if (isActive) {
-              filter = filter.filter(f => f !== fil); // Remove from filter
-              d3.select(event.currentTarget).style("stroke", "none");
-            } else {
-              filter.push(fil); // Add to filter
-              d3.select(event.currentTarget).style("stroke", "#ffffff");
-            }
-            filterData(); // call filtering to update visualizations
-            d3.select(this).classed('active', !isActive); */
             
           });
 
