@@ -56,6 +56,7 @@ class LeafletMap {
 
     vis.theMap = L.map('my-map', {
       center: [39.15, -84.5],
+      minZoom: 10,
       zoom: 11,
       //This zooms in perfectly on cincinnati, thank you josh
       //center: [30,0],
@@ -78,7 +79,8 @@ class LeafletMap {
     
     //handler here for updating the map, as you zoom in and out           
     vis.theMap.on("zoomend", function(){
-      vis.updateVis();
+        vis.updateVis();
+      //vis.updateVis();
     });
     vis.updateVis();
 
