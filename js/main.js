@@ -165,10 +165,10 @@ d3.tsv('data/test.tsv')
 	// timeline.updateVis();
 
   // Bar chart #1:
+
   
-  const colorScale1 = d3.scaleOrdinal()
-      .domain(['0', '1', '2', '3', '4', '5', '6'])
-      .range(['#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1', '#6497b1']);
+
+  
 
 
       let heightitem = 200;
@@ -182,7 +182,7 @@ d3.tsv('data/test.tsv')
           'containerWidth': widthitem,
           // 'reverseOrder': true,
           // 'yScaleLog': false
-          'colors' : colorScale1
+          'colors' : ['#00ff00', '#ff0000']
           }, getDayOWeek(data), "Days of the Week", true,"Day","Amount",data); 
       dayChart.updateVis();
 
@@ -194,7 +194,7 @@ d3.tsv('data/test.tsv')
         'containerWidth': widthitem,
         'reverseOrder': true,
         // 'yScaleLog': false
-        'colors' : colorScale1
+        'colors' : ['#00ff00', '#0000ff']
         }, getNumberOfThings(data,"SERVICE_CODE"), "Major Categories", true,"Service Code","Times Called",data); 
     serviceChart.updateVis();
       
@@ -205,7 +205,7 @@ d3.tsv('data/test.tsv')
       'containerWidth': widthitem,
       'reverseOrder': true,
       // 'yScaleLog': false
-      'colors' : colorScale1
+      'colors' : ['#000000', '#aaaaaa']
       }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
     zipChart.updateVis();
 
