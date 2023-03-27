@@ -20,8 +20,7 @@ class LineChart {
 	 */
     initVis() {
       let vis = this;
-      let dates, lineData;
-      console.log(this.data);
+      //let dates, lineData;
 
       //convert strings to dates
       // this.data.forEach(d => {
@@ -58,7 +57,7 @@ class LineChart {
        .attr('width', vis.config.containerWidth)
        .attr('height', vis.config.containerHeight);
 
-      vis.xValue = lineData;
+      vis.xValue = d => d[0];
       vis.yValue = d => d[1];
   
       vis.area = d3.area()
