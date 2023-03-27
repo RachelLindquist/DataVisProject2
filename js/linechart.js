@@ -56,8 +56,9 @@ class LineChart {
        vis.svg = d3.select(vis.config.parentElement)
        .attr('width', vis.config.containerWidth)
        .attr('height', vis.config.containerHeight);
+       console.log (vis.data);
 
-      vis.xValue = d => d[0];
+      vis.xValue = d => new Date(d[0]);
       vis.yValue = d => d[1];
   
       vis.area = d3.area()
@@ -166,6 +167,8 @@ class LineChart {
             // Get date that corresponds to current mouse x-coordinate
             const xPos = d3.pointer(event, this)[0]; // First array element is x, second is y
             const date = vis.xScale.invert(xPos);
+
+            //TODO, need to update the tooltip
   
             // Find nearest data point
             const index = vis.bisectDate(vis.data, date, 1);
