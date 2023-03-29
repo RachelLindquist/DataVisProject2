@@ -188,20 +188,42 @@ class LineChart {
           });
 
           //fix these
-          //vis.context = vis.svg.append('g')
-          //.attr('transform', `translate(${20},${20})`);
-  
-     // vis.contextAreaPath = vis.context.append('path')
-         // .attr('class', 'chart-area');
-  
-      //brushing area
-      vis.xAxisContextG = vis.chart.append('g')
-          .attr('class', 'axis x-axis')
           //vis.config.contextHeight = 50, height of the brushing thing
-          .attr('transform', `translate(0,${50})`);
-  
-      vis.brushG = vis.chart.append('g')
-          .attr('class', 'brush x-brush'); 
+          vis.xScaleContext = d3.scaleTime().range([0, vis.config.width]);
+          vis.yScaleContext = d3
+          .scaleLinear()
+          .range([50, 0])
+          .nice();
+          vis.context = vis.svg
+          .append("g")
+          .attr(
+            "transform",
+            `translate(${vis.config.margin.left},${vis.config.margin.top})`
+          );
+    
+        vis.contextAreaPath = vis.context
+          .append("path")
+          .attr("class", "chart-area");
+    
+        vis.xAxisContextG = vis.context
+          .append("g")
+          .attr("class", "axis x-axis")
+          //vis.config.contextHeight = 50, height of the brushing thing
+          .attr("transform", `translate(0,${50})`);
+    
+        vis.brushG = vis.context.append("g").attr("class", "brush x-brush");
+
+        vis.xScaleContext.domain(vis.xScale.domain());
+        vis.yScaleContext.domain(vis.yScale.domain());
+
+        vis.area = d3
+          .area()
+          .x((d) => vis.xScaleContext(vis.xValue(d)))
+          .y1((d) => vis.yScaleContext(vis.yValue(d)))
+          .y0(vis.config.contextHeight);
+
+
+        vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
   
   
       // Initialize brush component
