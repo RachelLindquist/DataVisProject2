@@ -117,7 +117,7 @@ class LineChart {
         .attr('class', 'axis y-axis');
 
    // Add line path
-   vis.chart.append('path')
+   vis.linepath = vis.chart.append('path')
        .data([vis.data])
        .attr('class', 'chart-line')
        .attr('d', vis.line)
@@ -186,5 +186,62 @@ class LineChart {
                 .style('fill', 'black')
                 .text(Math.round(d.count));
           });
-    }
+
+          //fix these
+          //vis.context = vis.svg.append('g')
+          //.attr('transform', `translate(${20},${20})`);
+  
+     // vis.contextAreaPath = vis.context.append('path')
+         // .attr('class', 'chart-area');
+  
+      //brushing area
+      vis.xAxisContextG = vis.chart.append('g')
+          .attr('class', 'axis x-axis')
+          //vis.config.contextHeight = 50, height of the brushing thing
+          .attr('transform', `translate(0,${50})`);
+  
+      vis.brushG = vis.chart.append('g')
+          .attr('class', 'brush x-brush'); 
+  
+  
+      // Initialize brush component
+      vis.brush = d3.brushX()
+          //vis.config.contextHeight = 50, height of the brushing thing
+          .extent([[0, 0], [vis.config.containderWidth, 50]])
+          .on('brush', function({selection}) {
+            if (selection) vis.brushed(selection);
+          })
+          .on('end', function({selection}) {
+            if (!selection) vis.brushed(null);
+          });
+
+          const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
+          
+          vis.brushG
+              .call(vis.brush)
+              .call(vis.brush.move, defaultBrushSelection);
+        } 
+      
+        /**
+         * React to brush events
+         */
+        brushed(selection) {
+          let vis = this;
+      
+          // Check if the brush is still active or if it has been removed
+          if (selection) {
+            // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+            const selectedDomain = selection.map(vis.xScale.invert, vis.xScale);
+      
+            // Update x-scale of the focus view accordingly
+            vis.xScale.domain(selectedDomain);
+          } else {
+            // Reset x-scale of the focus view (full time period)
+            vis.xScale.domain(vis.xScale.domain());
+          }
+      
+          // Redraw line and update x-axis labels in focus view
+          vis.linepath.attr('d', vis.line);
+          vis.xAxisG.call(vis.xAxisG);
+        }
   }
