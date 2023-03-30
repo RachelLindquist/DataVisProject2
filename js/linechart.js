@@ -36,9 +36,8 @@ class LineChart {
       // Initialize scales and axes
 	  
 	  // Initialize scales
-      vis.xScale = d3.scaleLinear()
-          .range([0, vis.width])
-          .nice();
+    vis.xScale = d3.scaleTime()
+    .range([0, vis.width]);
   
       vis.yScale = d3.scaleLinear()
           .range([vis.height, 0])
@@ -59,7 +58,7 @@ class LineChart {
        .attr('height', vis.config.containerHeight);
        console.log (vis.data);
 
-      vis.xValue = d => new Date(d[0]);
+      vis.xValue = d => d[0];
       vis.yValue = d => d[1];
   
       //vis.area = d3.area()
@@ -192,11 +191,14 @@ class LineChart {
 
           //fix these
           //vis.config.contextHeight = 50, height of the brushing thing
+          /*
           vis.xScaleContext = d3.scaleTime().range([0, vis.config.width]);
           vis.yScaleContext = d3
           .scaleLinear()
           .range([50, 0])
           .nice();
+
+        
           vis.context = vis.svg
           .append("g")
           .attr(
@@ -250,6 +252,7 @@ class LineChart {
         /**
          * React to brush events
          */
+        /*
         brushed(selection) {
           let vis = this;
       
@@ -268,5 +271,6 @@ class LineChart {
           // Redraw line and update x-axis labels in focus view
           vis.linepath.attr('d', vis.line);
           vis.xAxisG.call(vis.xAxisG);
-        }
+        } */
+      }
   }

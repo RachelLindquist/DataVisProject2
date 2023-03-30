@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-d3.tsv('data/test.tsv')
-//d3.tsv('data/Cincy311_2022_final.tsv')
+//d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -21,6 +21,10 @@ d3.tsv('data/test.tsv')
   var data = data.filter(function(d){
     return d["LAST_TABLE_UPDATE"].length >= 1;
   }); //removes poorly stored data that is missing columns
+
+  var data = data.filter(function(d){
+    return new Date(d["REQUESTED_DATE"]).getFullYear() >= 2021;
+  }); 
   count = count - data.length; //stores number of missing data, still need to display somewhere
   document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
 
@@ -147,7 +151,7 @@ d3.tsv('data/test.tsv')
 		'parentElement': '#linechart',
 		'containerHeight': 300,
 		'containerWidth': 400,
-	}, getNumberOfThings(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
+	}, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
 	timeline.updateVis();
 
   // Bar chart #1:
@@ -263,7 +267,6 @@ function filterData(workingData){
 
 
 function getNumberOfThings(data_base, indx) {
-  console.log(data);
   let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
   //   console.log(vis.data)
   data1 = data1.sort((a,b) => {
@@ -310,4 +313,21 @@ function getMassRad(data_base) {
     })
 
     return(data);
+}
+
+function getNumberOfThingsDate(data_base, indx) {
+  let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
+  //console.log("this one");
+  //console.log(data_base);
+  //   console.log(vis.data)
+  data1.forEach(d => {
+    d[0] = new Date(d[0]);
+  });
+
+  data1 = data1.sort((a,b) => {
+      return a[0] - b[0];
+    });
+
+
+  return(data1)
 }
