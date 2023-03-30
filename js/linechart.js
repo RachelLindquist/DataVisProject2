@@ -36,8 +36,8 @@ class LineChart {
       // Initialize scales and axes
 	  
 	  // Initialize scales
-      vis.xScale = d3.scaleLinear()
-          .range([0, vis.width]);
+    vis.xScale = d3.scaleTime()
+    .range([0, vis.width]);
   
       vis.yScale = d3.scaleLinear()
           .range([vis.height, 0])
@@ -45,10 +45,10 @@ class LineChart {
   
       // Initialize axes
       vis.xAxis = d3.axisBottom(vis.xScale)
-          .ticks(6)
-          .tickSizeOuter(0)
-          .tickPadding(10)
-          .tickFormat(d => d[1]);
+          //.ticks(6)
+          //.tickSizeOuter(0)
+          //.tickPadding(10)
+          //.tickFormat(d => d[1]);
   
       vis.yAxis = d3.axisLeft(vis.yScale);
   
@@ -58,13 +58,13 @@ class LineChart {
        .attr('height', vis.config.containerHeight);
        console.log (vis.data);
 
-      vis.xValue = d => new Date(d[0]);
+      vis.xValue = d => d[0];
       vis.yValue = d => d[1];
   
-      vis.area = d3.area()
-          .x(d => vis.xScale(vis.xValue(d)))
-          .y1(d => vis.yScale(vis.yValue(d)))
-         .y0(vis.height);
+      //vis.area = d3.area()
+      //    .x(d => vis.xScale(vis.xValue(d)))
+      //    .y1(d => vis.yScale(vis.yValue(d)))
+      //    .y0(vis.height);
   
       vis.line = d3.line()
           .x(d => vis.xScale(vis.xValue(d)))
@@ -172,14 +172,16 @@ class LineChart {
   
             // Find nearest data point
             const index = vis.bisectDate(vis.data, date, 1);
+            console.log(vis.data);
+            console.log(date);
             const a = vis.data[index - 1];
             const b = vis.data[index];
-            const d = b && (date - a.year > b.year- date) ? b : a; 
+            const d = b && (date - a[0] > b[0] - date) ? b : a; 
   
             // Update tooltip
             vis.tooltip.select('circle')
                 .style('fill', 'black')
-                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]))})`);
+                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${vis.yScale(d[1])})`);
             
             vis.tooltip.select('text')
                 .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]) - 15)})`)
@@ -188,20 +190,45 @@ class LineChart {
           });
 
           //fix these
-          //vis.context = vis.svg.append('g')
-          //.attr('transform', `translate(${20},${20})`);
-  
-     // vis.contextAreaPath = vis.context.append('path')
-         // .attr('class', 'chart-area');
-  
-      //brushing area
-      vis.xAxisContextG = vis.chart.append('g')
-          .attr('class', 'axis x-axis')
           //vis.config.contextHeight = 50, height of the brushing thing
-          .attr('transform', `translate(0,${50})`);
-  
-      vis.brushG = vis.chart.append('g')
-          .attr('class', 'brush x-brush'); 
+          /*
+          vis.xScaleContext = d3.scaleTime().range([0, vis.config.width]);
+          vis.yScaleContext = d3
+          .scaleLinear()
+          .range([50, 0])
+          .nice();
+
+        
+          vis.context = vis.svg
+          .append("g")
+          .attr(
+            "transform",
+            `translate(${vis.config.margin.left},${vis.config.margin.top})`
+          );
+    
+        vis.contextAreaPath = vis.context
+          .append("path")
+          .attr("class", "chart-area");
+    
+        vis.xAxisContextG = vis.context
+          .append("g")
+          .attr("class", "axis x-axis")
+          //vis.config.contextHeight = 50, height of the brushing thing
+          .attr("transform", `translate(0,${50})`);
+    
+        vis.brushG = vis.context.append("g").attr("class", "brush x-brush");
+
+        vis.xScaleContext.domain(vis.xScale.domain());
+        vis.yScaleContext.domain(vis.yScale.domain());
+
+        vis.area = d3
+          .area()
+          .x((d) => vis.xScaleContext(vis.xValue(d)))
+          .y1((d) => vis.yScaleContext(vis.yValue(d)))
+          .y0(vis.config.contextHeight);
+
+
+        vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
   
   
       // Initialize brush component
@@ -222,6 +249,7 @@ class LineChart {
     //           .call(vis.brush.move, defaultBrushSelection);
     //     } 
       
+
     //     /**
     //      * React to brush events
     //      */
