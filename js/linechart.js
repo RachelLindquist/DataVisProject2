@@ -179,12 +179,12 @@ class LineChart {
             // Update tooltip
             vis.tooltip.select('circle')
                 .style('fill', 'black')
-                .attr('transform', `translate(${vis.xScale(d.year)},${vis.yScale(d.count)})`);
+                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]))})`);
             
             vis.tooltip.select('text')
-                .attr('transform', `translate(${vis.xScale(d.year)},${(vis.yScale(d.count) - 15)})`)
+                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]) - 15)})`)
                 .style('fill', 'black')
-                .text(Math.round(d.count));
+                .text(Math.round(d[1]));
           });
 
           //fix these
@@ -205,43 +205,43 @@ class LineChart {
   
   
       // Initialize brush component
-      vis.brush = d3.brushX()
-          //vis.config.contextHeight = 50, height of the brushing thing
-          .extent([[0, 0], [vis.config.containderWidth, 50]])
-          .on('brush', function({selection}) {
-            if (selection) vis.brushed(selection);
-          })
-          .on('end', function({selection}) {
-            if (!selection) vis.brushed(null);
-          });
+    //   vis.brush = d3.brushX()
+    //       //vis.config.contextHeight = 50, height of the brushing thing
+    //       .extent([[0, 0], [vis.config.containderWidth, 50]])
+    //       .on('brush', function({selection}) {
+    //         if (selection) vis.brushed(selection);
+    //       })
+    //       .on('end', function({selection}) {
+    //         if (!selection) vis.brushed(null);
+    //       });
 
-          const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
+    //       const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
           
-          vis.brushG
-              .call(vis.brush)
-              .call(vis.brush.move, defaultBrushSelection);
-        } 
+    //       vis.brushG
+    //           .call(vis.brush)
+    //           .call(vis.brush.move, defaultBrushSelection);
+    //     } 
       
-        /**
-         * React to brush events
-         */
-        brushed(selection) {
-          let vis = this;
+    //     /**
+    //      * React to brush events
+    //      */
+    //     brushed(selection) {
+    //       let vis = this;
       
-          // Check if the brush is still active or if it has been removed
-          if (selection) {
-            // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
-            const selectedDomain = selection.map(vis.xScale.invert, vis.xScale);
+    //       // Check if the brush is still active or if it has been removed
+    //       if (selection) {
+    //         // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+    //         const selectedDomain = selection.map(vis.xScale.invert, vis.xScale);
       
-            // Update x-scale of the focus view accordingly
-            vis.xScale.domain(selectedDomain);
-          } else {
-            // Reset x-scale of the focus view (full time period)
-            vis.xScale.domain(vis.xScale.domain());
-          }
+    //         // Update x-scale of the focus view accordingly
+    //         vis.xScale.domain(selectedDomain);
+    //       } else {
+    //         // Reset x-scale of the focus view (full time period)
+    //         vis.xScale.domain(vis.xScale.domain());
+    //       }
       
-          // Redraw line and update x-axis labels in focus view
-          vis.linepath.attr('d', vis.line);
-          vis.xAxisG.call(vis.xAxisG);
+    //       // Redraw line and update x-axis labels in focus view
+    //       vis.linepath.attr('d', vis.line);
+    //       vis.xAxisG.call(vis.xAxisG);
         }
   }

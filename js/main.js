@@ -157,8 +157,8 @@ d3.tsv('data/test.tsv')
   
 
 
-      let heightitem = 200;
-      let widthitem = 400;
+    let widthitem = window.innerWidth/3 - 15;
+    let heightitem = window.innerHeight/3;
       
 
       // Day of the week visualization- bar chart
