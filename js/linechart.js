@@ -90,12 +90,12 @@ class LineChart {
       //       .text(this.yAxisName);
   
       // Append title
-      vis.svg.append('text')
-          .attr('class', 'axis-title')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('dy', '.71em')
-          .text(this.title);
+      // vis.svg.append('text')
+      //     .attr('class', 'axis-title')
+      //     .attr('x', 0)
+      //     .attr('y', 0)
+      //     .attr('dy', '.71em')
+      //     .text(this.title);
     }
   
    updateVis() { 
@@ -178,12 +178,13 @@ class LineChart {
   
             // Update tooltip
             vis.tooltip.select('circle')
-                .style('fill', 'black')
+                .style('fill', '#9F2B68')
+                .style("opacity", 100)
                 .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${vis.yScale(d[1])})`);
             
             vis.tooltip.select('text')
                 .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]) - 15)})`)
-                .style('fill', 'black')
+                .style('fill', '#9F2B68')
                 .text(Math.round(d[1]));
           });
 

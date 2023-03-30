@@ -199,6 +199,9 @@ class Scatterplot {
     // Tooltip event listeners
     circles
         .on('mouseover', (event,d) => {
+          d3.select(event.currentTarget)
+            .attr("fill", "black"); //change the fill
+
           d3.select('#tooltip')
             .style('opacity', 1)
             .style('display', 'block')
@@ -210,9 +213,16 @@ class Scatterplot {
                 <p>Request Time: ${d.request} : Process time: ${d.processtime}</p>
             `);
         })
-        .on('mouseleave', () => {
-          d3.select('#tooltip').style('opacity', 0);
-        });
+        // .on('mouseleave', () => {
+        //   d3.select('#tooltip').style('opacity', 0).style('fill', d => vis.colorScale(d[vis.coloring]));
+        // });
+        .on('mouseleave', function() { //function to add mouseover event
+          d3.select(this).transition() //D3 selects the object we have moused over in order to perform operations on it
+            .duration('150') //how long we are transitioning between the two states (works like keyframes)
+            .attr("fill", d => vis.colorScale(d[vis.coloring])) //change the fill
+
+          d3.select('#tooltip').style('opacity', 0);//turn off the tooltip
+        })
 
     vis.chart.selectAll('.text')
         .data(vis.data, d => d.name)

@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-d3.tsv('data/test.tsv')
-//d3.tsv('data/Cincy311_2022_final.tsv')
+//d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -57,7 +57,7 @@ d3.tsv('data/test.tsv')
   let ctList = [...new Set(data.map(d => d["SERVICE_CODE"]))];
   const  ctColors= d3.scaleOrdinal()
   .domain(ctList)
-  .range(d3.quantize(d3.interpolateHcl("#fafa6e", "#2A4858"), ctList.length));
+  .range(d3.quantize(d3.interpolateHcl("#FFC300", "#2A4858"), ctList.length));
   
   //Process Time
   let ptList = [...new Set(data.map(d => d.process))];
@@ -69,7 +69,7 @@ d3.tsv('data/test.tsv')
   let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
   const  cdColors= d3.scaleOrdinal()
   .domain(cdList)
-  .range(d3.quantize(d3.interpolateHcl("#000000", "#ffffff"), cdList.length));
+  .range(d3.quantize(d3.interpolateHcl("#483248", "#39a78e"), cdList.length));
 
   //Public Agency 
   let paList = [...new Set(data.map(d => d["AGENCY_RESPONSIBLE"]))];
@@ -156,7 +156,7 @@ d3.tsv('data/test.tsv')
       'containerWidth': widthitem,
       'reverseOrder': true,
       // 'yScaleLog': false
-      'colors' : ['#000000', '#aaaaaa']
+      'colors' : ['#FF5733', ' #900C3F']
       }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
     zipChart.updateVis();
 
