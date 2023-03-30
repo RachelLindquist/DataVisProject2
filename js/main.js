@@ -89,31 +89,6 @@ d3.tsv('data/Cincy311_2022_final.tsv')
   //leafletMap.changeMap(3, 2);
 
 
-  d3.selectAll(".color").on('click', function() {
-    // Toggle 'inactive' class
-    //remove inactive from everything
-    d3.select("#callT").classed('inactive', false);
-    d3.select("#procT").classed('inactive', false);
-    d3.select("#callD").classed('inactive', false);
-    d3.select("#pubA").classed('inactive', false);
-    //except this
-    d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
-    
-    // Filter data accordingly and update vis
-    let callT = document.getElementById("callT");
-    let procT = document.getElementById("procT");
-    let callD = document.getElementById("callD");
-    let pubA = document.getElementById("pubA");
-    if (callT.classList.contains('inactive')){
-      leafletMap.changeColors(ctColors, "SERVICE_CODE");
-    } else if (procT.classList.contains('inactive')){
-      leafletMap.changeColors(ptColors, "process");
-    } else if (callD.classList.contains('inactive')){
-      leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
-    } else { //pubA
-      leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
-    }
-  });
 
   d3.selectAll(".map").on('click', function() {
     // Toggle 'inactive' class
@@ -199,8 +174,41 @@ d3.tsv('data/Cincy311_2022_final.tsv')
         'parentElement': '#scatterplot',
         'containerHeight': heightitem,
         'containerWidth': window.innerWidth - 15,
-        }, getMassRad(data), 'Recived vs Updated', "Recived", "Process time");
+        'colorScale': ctColors,
+        }, getMassRad(data), 'Recived vs Updated', "Recived", "Process time", "process");
     scatterplot.updateVis();
+
+
+
+    d3.selectAll(".color").on('click', function() {
+      // Toggle 'inactive' class
+      //remove inactive from everything
+      d3.select("#callT").classed('inactive', false);
+      d3.select("#procT").classed('inactive', false);
+      d3.select("#callD").classed('inactive', false);
+      d3.select("#pubA").classed('inactive', false);
+      //except this
+      d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
+      
+      // Filter data accordingly and update vis
+      let callT = document.getElementById("callT");
+      let procT = document.getElementById("procT");
+      let callD = document.getElementById("callD");
+      let pubA = document.getElementById("pubA");
+      if (callT.classList.contains('inactive')){
+        leafletMap.changeColors(ctColors, "SERVICE_CODE");
+        scatterplot.changeColors(ctColors, "SERVICE_CODE");
+      } else if (procT.classList.contains('inactive')){
+        leafletMap.changeColors(ptColors, "process");
+        scatterplot.changeColors(ptColors, "process");
+      } else if (callD.classList.contains('inactive')){
+        leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
+        scatterplot.changeColors(cdColors, "REQUESTED_DATETIME");
+      } else { //pubA
+        leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
+        scatterplot.changeColors(paColors, "AGENCY_RESPONSIBLE");
+      }
+    });
   
   // Extra bar chart focusing on descriptions – showcasing common descriptions
 

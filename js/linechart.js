@@ -242,25 +242,25 @@ class LineChart {
         //   .y0(50);
 
 
-        vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
+      //   vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
   
   
-      // Initialize brush component
-      vis.brush = d3.brushX()
-          //vis.config.contextHeight = 50, height of the brushing thing
-          .extent([[0, 0], [vis.config.containderWidth, 50]])
-          .on('brush', function({selection}) {
-            if (selection) vis.brushed(selection);
-          })
-          .on('end', function({selection}) {
-            if (!selection) vis.brushed(null);
-          });
+      // // Initialize brush component
+      // vis.brush = d3.brushX()
+      //     //vis.config.contextHeight = 50, height of the brushing thing
+      //     .extent([[0, 0], [vis.config.containderWidth, 50]])
+      //     .on('brush', function({selection}) {
+      //       if (selection) vis.brushed(selection);
+      //     })
+      //     .on('end', function({selection}) {
+      //       if (!selection) vis.brushed(null);
+      //     });
 
-          const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
+      //     const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
           
-          vis.brushG
-              .call(vis.brush)
-              .call(vis.brush.move, defaultBrushSelection);
+      //     vis.brushG
+      //         .call(vis.brush)
+      //         .call(vis.brush.move, defaultBrushSelection);
         } 
       
         /**
@@ -287,4 +287,3 @@ class LineChart {
           vis.xAxisG.call(vis.xAxisG);
         } */
       }
-  }
