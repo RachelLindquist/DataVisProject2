@@ -56,7 +56,6 @@ class LineChart {
        vis.svg = d3.select(vis.config.parentElement)
        .attr('width', vis.config.containerWidth)
        .attr('height', vis.config.containerHeight);
-       console.log (vis.data);
 
       vis.xValue = d => d[0];
       vis.yValue = d => d[1];
@@ -75,20 +74,20 @@ class LineChart {
       vis.yScale.domain(d3.extent(vis.data, vis.yValue));
 
       // Append both axis titles
-      vis.svg.append('text')
-            .attr('class', 'axis-title')
-            .attr('y', vis.height)
-            .attr('x', vis.width + 10)
-            .attr('dy', '.71em')
-            .style('text-anchor', 'end')
-            .text(this.xAxisName);
+      // vis.svg.append('text')
+      //       .attr('class', 'axis-title')
+      //       .attr('y', vis.height)
+      //       .attr('x', vis.width + 10)
+      //       .attr('dy', '.71em')
+      //       .style('text-anchor', 'end')
+      //       .text(this.xAxisName);
     
-      vis.svg.append('text')
-            .attr('class', 'axis-title')
-            .attr('x', 0)
-            .attr('y', 35)
-            .attr('dy', '.71em')
-            .text(this.yAxisName);
+      // vis.svg.append('text')
+      //       .attr('class', 'axis-title')
+      //       .attr('x', 0)
+      //       .attr('y', 35)
+      //       .attr('dy', '.71em')
+      //       .text(this.yAxisName);
   
       // Append title
       vis.svg.append('text')
@@ -141,8 +140,9 @@ class LineChart {
    vis.tooltip.append('text');
    vis.marks = vis.chart.append('g');
   
-      vis.xAxisG.call(vis.xAxis);
-      vis.yAxisG.call(vis.yAxis);
+      //vis.xAxisG.call(vis.xAxis);
+      //vis.yAxisG.call(vis.yAxis);
+
       vis.bisectDate = d3.bisector(vis.xValue).left;
      
      this.renderVis();
@@ -172,8 +172,6 @@ class LineChart {
   
             // Find nearest data point
             const index = vis.bisectDate(vis.data, date, 1);
-            console.log(vis.data);
-            console.log(date);
             const a = vis.data[index - 1];
             const b = vis.data[index];
             const d = b && (date - a[0] > b[0] - date) ? b : a; 
@@ -188,6 +186,25 @@ class LineChart {
                 .style('fill', 'black')
                 .text(Math.round(d[1]));
           });
+
+          vis.xAxisG.call(vis.xAxis);
+          vis.chart.append('text')
+          .attr('class', 'axis-title')
+          .attr("y", vis.height + vis.config.margin.bottom-15)
+          .attr("x",(vis.width / 2))
+          .style("text-anchor", "middle")
+          .text(vis.xAxisName);
+      
+      vis.yAxisG.call(vis.yAxis);
+          vis.chart.append('text')
+          .attr('class', 'axis-title')
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - vis.config.margin.left)
+          .attr("x",0 - (vis.height / 2))
+          .attr("dy", "1em")
+          .style("text-anchor", "middle")
+          .text(vis.yAxisName);
+
 
           //fix these
           //vis.config.contextHeight = 50, height of the brushing thing

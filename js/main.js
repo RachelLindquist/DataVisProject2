@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-//d3.tsv('data/test.tsv')
-d3.tsv('data/Cincy311_2022_final.tsv')
+d3.tsv('data/test.tsv')
+//d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -18,13 +18,12 @@ d3.tsv('data/Cincy311_2022_final.tsv')
   //You could indicate somewhere within the visualization how many calls are not mapped. 
   //^ handled by count
   let count = data.length;
-  var data = data.filter(function(d){
-    return d["LAST_TABLE_UPDATE"].length >= 1;
+  console.log(data);
+  data = data.filter(function(d){
+    return d["LAST_TABLE_UPDATE"].length >= 1 && new Date(d["REQUESTED_DATE"]).getFullYear() >= 2022 && new Date(d["REQUESTED_DATE"]).getMonth() <= 5;
   }); //removes poorly stored data that is missing columns
+  console.log(data);
 
-  var data = data.filter(function(d){
-    return new Date(d["REQUESTED_DATE"]).getFullYear() >= 2021;
-  }); 
   count = count - data.length; //stores number of missing data, still need to display somewhere
   document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
 
@@ -50,7 +49,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
 
     });
-    // console.log(data[0].dayOfWeek);
+   
     
     //Color by Call Type, Color by Process Time, Color by Call Date, Color by Public Agency
 
@@ -64,7 +63,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
   let ptList = [...new Set(data.map(d => d.process))];
   const  ptColors= d3.scaleOrdinal()
   .domain(ptList)
-  .range(d3.quantize(d3.interpolateHcl("#ff0000", "#00ff00"), ptList.length));
+  .range(d3.quantize(d3.interpolateHcl("#06aa06", "#dd0606"), ptList.length));
 
   //Call Date
   let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
@@ -175,7 +174,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
         'containerHeight': heightitem,
         'containerWidth': window.innerWidth - 15,
         'colorScale': ctColors,
-        }, getMassRad(data), 'Recived vs Updated', "Recived", "Process time", "process");
+        }, getScatter(data), 'Recived vs Updated', "Recived", "Process time", "code");
     scatterplot.updateVis();
 
 
@@ -197,16 +196,16 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       let pubA = document.getElementById("pubA");
       if (callT.classList.contains('inactive')){
         leafletMap.changeColors(ctColors, "SERVICE_CODE");
-        scatterplot.changeColors(ctColors, "SERVICE_CODE");
+        scatterplot.changeColors(ctColors, "code");
       } else if (procT.classList.contains('inactive')){
         leafletMap.changeColors(ptColors, "process");
-        scatterplot.changeColors(ptColors, "process");
+        scatterplot.changeColors(ptColors, "processtime");
       } else if (callD.classList.contains('inactive')){
         leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
-        scatterplot.changeColors(cdColors, "REQUESTED_DATETIME");
+        scatterplot.changeColors(cdColors, "request");
       } else { //pubA
         leafletMap.changeColors(paColors, "AGENCY_RESPONSIBLE");
-        scatterplot.changeColors(paColors, "AGENCY_RESPONSIBLE");
+        scatterplot.changeColors(paColors, "agency");
       }
     });
   
@@ -271,7 +270,6 @@ function filterData(workingData){
 
 function getNumberOfThings(data_base, indx) {
   let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
-  //   console.log(vis.data)
   data1 = data1.sort((a,b) => {
       return a[1] - b[1];
     });
@@ -301,7 +299,7 @@ function dicToArr(totalp) {
 }
 
 
-function getMassRad(data_base) {
+function getScatter(data_base) {
 
     let colorScale = d3.scaleOrdinal()
         .range(['#0abdc6','#0F7EA1','#133e7c'])
@@ -310,9 +308,7 @@ function getMassRad(data_base) {
     let data = [];
 
     data_base.forEach(d => {
-        if (d.StellarRadius != 0 && d.StellarMass != 0) {
-            data.push({"name": d['SERVICE_NAME'],'label':'', 'request':d.request, 'processtime':d.process, 'color':colorScale(d.Distance), 'code':d['SERVICE_CODE']})
-        }
+      data.push({"name": d['SERVICE_NAME'],'label':'', 'request':d.request, 'processtime':d.process, 'color':colorScale(d.Distance), 'code':d['SERVICE_CODE'], 'agency':d['AGENCY_RESPONSIBLE']})
     })
 
     return(data);
@@ -320,9 +316,6 @@ function getMassRad(data_base) {
 
 function getNumberOfThingsDate(data_base, indx) {
   let data1 = d3.rollups(data_base, g => g.length, d => d[indx]);
-  //console.log("this one");
-  //console.log(data_base);
-  //   console.log(vis.data)
   data1.forEach(d => {
     d[0] = new Date(d[0]);
   });

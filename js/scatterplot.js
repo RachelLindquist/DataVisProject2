@@ -120,7 +120,6 @@ class Scatterplot {
    */
   updateVis() {
     let vis = this;
-    console.log(vis.data);
 
     // Update all dimensions based on the current screen size
     vis.config.containerWidth = document.getElementById(vis.config.parentElement.substring(1)).clientWidth;
@@ -157,7 +156,7 @@ class Scatterplot {
     vis.xScale.domain([d3.min(vis.data, vis.xValue), d3.max(vis.data, vis.xValue)]);
     vis.yScale.domain([d3.min(vis.data, vis.yValue), d3.max(vis.data, vis.yValue)]);
 
-    console.log([d3.min(vis.data, vis.xValue), d3.max(vis.data, vis.xValue)]);
+
 
         // Set the scale input domains
     // vis.xScale.domain(d3.extent(vis.data, vis.xValue));
@@ -229,7 +228,7 @@ class Scatterplot {
     vis.xAxisG.call(vis.xAxis);
         vis.chart.append('text')
         .attr('class', 'axis-title')
-        .attr("y", vis.height + vis.config.margin.bottom-10)
+        .attr("y", vis.height + vis.config.margin.bottom-30)
         .attr("x",(vis.width / 2))
         .style("text-anchor", "middle")
         .text(vis.xlabel);
