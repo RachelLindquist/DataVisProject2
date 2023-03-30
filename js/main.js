@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-d3.tsv('data/test.tsv')
-//d3.tsv('data/Cincy311_2022_final.tsv')
+//d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
@@ -146,23 +146,10 @@ d3.tsv('data/test.tsv')
     } 
   });
 
-  // Timeline  
-  let timeline = new LineChart({
-		'parentElement': '#linechart',
-		'containerHeight': 300,
-		'containerWidth': 400,
-	}, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
-	timeline.updateVis();
-
-  // Bar chart #1:
-
   
 
-  
-
-
-      let heightitem = 200;
-      let widthitem = 400;
+    let widthitem = window.innerWidth/3 - 15;
+    let heightitem = window.innerHeight/2.5;
       
 
       // Day of the week visualization- bar chart
@@ -200,10 +187,18 @@ d3.tsv('data/test.tsv')
     zipChart.updateVis();
 
 
+    // Timeline  
+    let timeline = new LineChart({
+        'parentElement': '#linechart',
+        'containerHeight': heightitem,
+        'containerWidth': window.innerWidth - 15,
+    }, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
+    timeline.updateVis();
+
     scatterplot = new Scatterplot({ 
         'parentElement': '#scatterplot',
         'containerHeight': heightitem,
-        'containerWidth': widthitem*2,
+        'containerWidth': window.innerWidth - 15,
         }, getMassRad(data), 'Recived vs Updated', "Recived", "Process time");
     scatterplot.updateVis();
   

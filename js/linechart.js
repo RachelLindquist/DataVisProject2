@@ -241,45 +241,50 @@ class LineChart {
         //   .y1((d) => vis.yScaleContext(vis.yValue(d)))
         //   .y0(50);
 
-        // vis.xScaleContext.domain(vis.xScale.domain());
-        // vis.yScaleContext.domain(vis.yScale.domain());
 
+        vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
+  
+  
+      // Initialize brush component
+      vis.brush = d3.brushX()
+          //vis.config.contextHeight = 50, height of the brushing thing
+          .extent([[0, 0], [vis.config.containderWidth, 50]])
+          .on('brush', function({selection}) {
+            if (selection) vis.brushed(selection);
+          })
+          .on('end', function({selection}) {
+            if (!selection) vis.brushed(null);
+          });
 
-        // vis.contextAreaPath.datum(vis.data).attr("d", vis.area);
-        // vis.xAxisContextG.call(vis.xAxisContext);
-
-        // const defaultBrushSelection = [
-        //   vis.xScale(new Date("1/4/2021")),
-        //   vis.xScaleContext.range()[1]
-        // ];
-        // vis.brushG.call(vis.brush).call(vis.brush.move, defaultBrushSelection);
-        // } 
+          const defaultBrushSelection = [vis.xScale(new Date('1/5/2021')), vis.xScale.range()[1]];
+          
+          vis.brushG
+              .call(vis.brush)
+              .call(vis.brush.move, defaultBrushSelection);
+        } 
       
-        // /**
-        //  * React to brush events
-        //  */
-        
-        // brushed(selection) {
-        //   let vis = this;
+        /**
+         * React to brush events
+         */
+        /*
+        brushed(selection) {
+          let vis = this;
       
-        //   // Check if the brush is still active or if it has been removed
-        //   if (selection) {
-        //     // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
-        //     const selectedDomain = selection.map(
-        //       vis.xScaleContext.invert,
-        //       vis.xScaleContext
-        //     );
+          // Check if the brush is still active or if it has been removed
+          if (selection) {
+            // Convert given pixel coordinates (range: [x0,x1]) into a time period (domain: [Date, Date])
+            const selectedDomain = selection.map(vis.xScale.invert, vis.xScale);
       
-        //     // Update x-scale of the focus view accordingly
-        //     vis.xScale.domain(selectedDomain);
-        //   } else {
-        //     // Reset x-scale of the focus view (full time period)
-        //     vis.xScale.domain(vis.xScaleContext.domain());
-        //   }
+            // Update x-scale of the focus view accordingly
+            vis.xScale.domain(selectedDomain);
+          } else {
+            // Reset x-scale of the focus view (full time period)
+            vis.xScale.domain(vis.xScale.domain());
+          }
       
-        //   // Redraw line and update x-axis labels in focus view
-        //   vis.linepath.attr("d", vis.line);
-        //   vis.xAxisG.call(vis.xAxis);
-        // }
+          // Redraw line and update x-axis labels in focus view
+          vis.linepath.attr('d', vis.line);
+          vis.xAxisG.call(vis.xAxisG);
+        } */
+      }
   }
-} 

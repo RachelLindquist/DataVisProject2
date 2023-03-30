@@ -7,15 +7,88 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="my-map"></div>
+    <div class="header">
+        <h1 style="background-color: #b7b7b7; font-size: 30px">Oh Boy 3PM</h1>
+        <p>By Josh Zack, Rachel Lindquist, and Nishidha Koneru</p>
+        <!-- <p>Sourced from NASA Exoplanet Archive:  <a href="https://exoplanetarchive.ipac.caltech.edu" target="_blank">https://exoplanetarchive.ipac.caltech.edu</a>/</p> -->
+      </div>
 
-    <svg id="daybar"></svg>
-    <svg id="servicebar"></svg>
-    <svg id="zipbar"></svg>
-    <svg id="linechart"></svg>
-    <svg id="scatterplot"></svg>
+
+    <div style="margin: 20px; justify-content: center; align-items: center; display: flex;">
+        <div id="my-map"></div>
+    </div>
+
+
+    
+    
+
+    <div style="display: flex; flex-direction: column;"> 
+        <div class="section">
+            <div class="graph">
+                <div class="topbar">
+                    <h1>
+                        Weekstuff
+                    </h1>
+                    <!-- <a href="http://en.wikipedia.org/wiki/Stellar_classification">Wiki on Stellar Classification</a> -->
+                    <p>Shows the number of Calls per day of Week</p>
+                </div>
+                <svg id="daybar"></svg>
+            </div>
+
+            <div class="graph">
+                <div class="topbar">
+                    <h1>
+                        Top Calls by Service Code
+                    </h1>
+                    <!-- <a href="http://en.wikipedia.org/wiki/Stellar_classification">Wiki on Stellar Classification</a> -->
+                    <p>Top Service Types Called</p>
+                </div>
+                
+                <svg id="servicebar"></svg>
+            </div>
+
+            <div class="graph">
+                <div class="topbar">
+                    <h1>
+                        Top Calls by Zipcode
+                    </h1>
+                    <!-- <a href="http://en.wikipedia.org/wiki/Stellar_classification">Wiki on Stellar Classification</a> -->
+                    <p>Top Zipcodes Called</p>
+                </div>
+                
+                <svg id="zipbar"></svg>
+            </div>
+        </div>
+
+
+    
+        <div class="graphlong">
+            <div class="topbar">
+                <h1>
+                    Line Chart
+                </h1>
+                <!-- <a href="http://en.wikipedia.org/wiki/Stellar_classification">Wiki on Stellar Classification</a> -->
+                <p>Linechartwords</p>
+            </div>
+            <svg id="linechart"></svg>
+        </div>
+
+        <div class="graphlong">
+            <div class="topbar">
+                <h1>
+                    Scatterplot
+                </h1>
+                <!-- <a href="http://en.wikipedia.org/wiki/Stellar_classification">Wiki on Stellar Classification</a> -->
+                <p>Scaterplotwords</p>
+            </div>
+            
+            <svg id="scatterplot"></svg>
+        </div>
+
+    </div>
     
     <script src="js/d3.v6.min.js"></script>
+    
     <script src="js/leaflet.js"></script>
     <script src="js/leafletMap.js"></script>
     <script src="js/barchart2.js"></script>
