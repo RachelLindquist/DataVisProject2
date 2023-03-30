@@ -5,8 +5,8 @@ let zipFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
-d3.tsv('data/test.tsv')
-// d3.tsv('data/Cincy311_2022_final.tsv')
+//d3.tsv('data/test.tsv')
+d3.tsv('data/Cincy311_2022_final.tsv')
 .then(_data => {
   data = _data;
   d3.select("#callT").classed('inactive', true);
