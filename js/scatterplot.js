@@ -5,17 +5,19 @@ class Scatterplot {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data, _title, _xlabel, _ylabel) {
+  constructor(_config, _data, _title, _xlabel, _ylabel, _coloring) {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 800,
       containerHeight: _config.containerHeight || 240,
       margin: _config.margin || {top: 25, right: 30, bottom: 60, left: 70},
-      tooltipPadding: 15
+      tooltipPadding: 15,
+      colorScale: _config.colorScale
     }
     this.data = _data;
     this.xlabel = _xlabel;
     this.ylabel = _ylabel;
+    this.coloring = _coloring;
     this.initVis();
   }
   
@@ -46,7 +48,9 @@ class Scatterplot {
     // vis.colorScale = d3.scaleOrdinal()
     //     .range(['#0abdc6','#0F7EA1','#133e7c'])
     //     .domain([0, d3.max(vis.data, vis.data.distance)]);
-        
+    vis.colorScale = d3.scaleOrdinal()
+    .range (this.config.colorScale.range())
+    .domain(this.config.colorScale.domain())
 
     // vis.xScale = d3.scaleLinear();
     // vis.yScale = d3.scaleLinear();
@@ -102,6 +106,13 @@ class Scatterplot {
     // .attr('dy', '.71em')
     // // .style('fill', 'white')
     // .text(vis.title);
+  }
+  changeColors(colorsScale, _color){
+    this.colorScale = d3.scaleOrdinal()
+        .range (colorsScale.range())
+        .domain(colorsScale.domain());
+    this.coloring = _color;
+    this.updateVis();
   }
 
   /**
@@ -183,7 +194,8 @@ class Scatterplot {
         .attr('r', 4)
         .attr('cy', d => vis.yScale(vis.yValue(d)))
         .attr('cx', d => vis.xScale(vis.xValue(d)))
-        .attr('fill', d => d.color);
+        //.attr('fill', d => d.color);
+        .attr("fill", d => vis.colorScale(d[vis.coloring]));
         
     // Tooltip event listeners
     circles
