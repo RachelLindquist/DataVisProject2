@@ -165,7 +165,7 @@ d3.tsv('data/test.tsv')
     let timeline = new LineChart({
         'parentElement': '#linechart',
         'containerHeight': heightitem,
-        'containerWidth': window.innerWidth - 15,
+        'containerWidth': window.innerWidth - 30,
     }, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
     timeline.updateVis();
 
