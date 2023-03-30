@@ -37,7 +37,8 @@ class LineChart {
 	  
 	  // Initialize scales
       vis.xScale = d3.scaleLinear()
-          .range([0, vis.width]);
+          .range([0, vis.width])
+          .nice();
   
       vis.yScale = d3.scaleLinear()
           .range([vis.height, 0])
@@ -45,10 +46,10 @@ class LineChart {
   
       // Initialize axes
       vis.xAxis = d3.axisBottom(vis.xScale)
-          .ticks(6)
-          .tickSizeOuter(0)
-          .tickPadding(10)
-          .tickFormat(d => d[1]);
+          //.ticks(6)
+          //.tickSizeOuter(0)
+          //.tickPadding(10)
+          //.tickFormat(d => d[1]);
   
       vis.yAxis = d3.axisLeft(vis.yScale);
   
@@ -61,10 +62,10 @@ class LineChart {
       vis.xValue = d => new Date(d[0]);
       vis.yValue = d => d[1];
   
-      vis.area = d3.area()
-          .x(d => vis.xScale(vis.xValue(d)))
-          .y1(d => vis.yScale(vis.yValue(d)))
-         .y0(vis.height);
+      //vis.area = d3.area()
+      //    .x(d => vis.xScale(vis.xValue(d)))
+      //    .y1(d => vis.yScale(vis.yValue(d)))
+      //    .y0(vis.height);
   
       vis.line = d3.line()
           .x(d => vis.xScale(vis.xValue(d)))
@@ -172,19 +173,21 @@ class LineChart {
   
             // Find nearest data point
             const index = vis.bisectDate(vis.data, date, 1);
+            console.log(vis.data);
+            console.log(date);
             const a = vis.data[index - 1];
             const b = vis.data[index];
-            const d = b && (date - a.year > b.year- date) ? b : a; 
+            const d = b && (date - a[0] > b[0] - date) ? b : a; 
   
             // Update tooltip
             vis.tooltip.select('circle')
                 .style('fill', 'black')
-                .attr('transform', `translate(${vis.xScale(d.year)},${vis.yScale(d.count)})`);
+                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${vis.yScale(d[1])})`);
             
             vis.tooltip.select('text')
-                .attr('transform', `translate(${vis.xScale(d.year)},${(vis.yScale(d.count) - 15)})`)
+                .attr('transform', `translate(${vis.xScale(new Date(d[0]))},${(vis.yScale(d[1]) - 15)})`)
                 .style('fill', 'black')
-                .text(Math.round(d.count));
+                .text(Math.round(d[1]));
           });
     }
   }
