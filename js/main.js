@@ -162,7 +162,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
 
     // Timeline  
-    let timeline = new LineChart({
+    timeline = new LineChart({
         'parentElement': '#linechart',
         'containerHeight': heightitem,
         'containerWidth': window.innerWidth - 30,
@@ -218,21 +218,15 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 //filter function for each item we plan on filtering
 function filterData(workingData){
   leafletMap.data = workingData;
-  dayChart.data = getDayOWeek(workingData);
-  serviceChart.data = getNumberOfThings(workingData,"SERVICE_CODE");
-  zipChart.data =getNumberOfThings(workingData,"ZIPCODE");
+
+
   //dayChart filtering
   if (weekFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => weekFilter.includes(d.dayOfWeek));
-    serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"SERVICE_CODE");
-    zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => weekFilter.includes(d.dayOfWeek)),"ZIPCODE");
   }
-
   //serviceChart filtering
   if (serviceFilter.length != 0) {
     leafletMap.data = leafletMap.data.filter(d => serviceFilter.includes(d["SERVICE_CODE"]));
-    dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])));
-    zipChart.data = getNumberOfThings(zipChart.ALLDATA.filter(d => serviceFilter.includes(d["SERVICE_CODE"])), "ZIPCODE");
   }
   /*
   if (processFilter.length == 0) {
@@ -242,13 +236,18 @@ function filterData(workingData){
   } */
   //zipChart
   if (zipFilter.length != 0) {
-    leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"]));
-    dayChart.data = getDayOWeek(dayChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])));
-    serviceChart.data = getNumberOfThings(serviceChart.ALLDATA.filter(d => zipFilter.includes(d["ZIPCODE"])),"SERVICE_CODE");
+    leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"])); 
   }
 
 
-  leafletMap.updateVis();
+  dayChart.data = getDayOWeek(leafletMap.data);
+  serviceChart.data = getNumberOfThings(leafletMap.data,"SERVICE_CODE");
+  zipChart.data = getNumberOfThings(leafletMap.data,"ZIPCODE");
+  scatterplot.data = getScatter(leafletMap.data)
+  timeline.data = getNumberOfThingsDate(leafletMap.data, 'REQUESTED_DATETIME')
+
+
+  
   //if used for filtering, make it unfiltered
   if (weekFilter.length != 0){
     dayChart.data = getDayOWeek(workingData);
@@ -259,9 +258,14 @@ function filterData(workingData){
   if (zipFilter.length != 0){
     zipChart.data =getNumberOfThings(workingData,"ZIPCODE");
   }
+
+  leafletMap.updateVis();
   dayChart.updateVis();
   serviceChart.updateVis();
   zipChart.updateVis();
+  scatterplot.updateVis();
+  timeline.updateVis();
+
 }
 
 
