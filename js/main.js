@@ -56,24 +56,36 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
     //Call Type
   let ctList = [...new Set(data.map(d => d["SERVICE_CODE"]))];
+  if (ctList.length > 13) {
+    ctList = ctList.slice(0,12);
+  }
   const  ctColors= d3.scaleOrdinal()
   .domain(ctList)
   .range(d3.quantize(d3.interpolateHcl("#FFC300", "#2A4858"), ctList.length));
   
   //Process Time
   let ptList = [...new Set(data.map(d => d.process))];
+  if (ptList.length > 13) {
+    ptList = ptList.slice(0,12);
+  }
   const  ptColors= d3.scaleOrdinal()
   .domain(ptList)
   .range(d3.quantize(d3.interpolateHcl("#06aa06", "#dd0606"), ptList.length));
 
   //Call Date
   let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
+  if (cdList.length > 13) {
+    cdList = cdList.slice(0,12);
+  }
   const  cdColors= d3.scaleOrdinal()
   .domain(cdList)
   .range(d3.quantize(d3.interpolateHcl("#483248", "#39a78e"), cdList.length));
 
   //Public Agency 
   let paList = [...new Set(data.map(d => d["AGENCY_RESPONSIBLE"]))];
+  if (paList.length > 13) {
+    paList = paList.slice(0,12);
+  }
   const  paColors= d3.scaleOrdinal()
   .domain(paList)
   .range(d3.quantize(d3.interpolateHcl("#0000ff", "#f0000f"), paList.length));
@@ -335,6 +347,7 @@ function getDayOWeek(data_base) {
   let data1 = dicToArr(totalp);
   return(data1);
 }
+
 
 function dicToArr(totalp) {
   // this is lazy coding but i needed to do it quickly so
