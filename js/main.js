@@ -18,11 +18,11 @@ d3.tsv('data/Cincy311_2022_final.tsv')
   //You could indicate somewhere within the visualization how many calls are not mapped. 
   //^ handled by count
   let count = data.length;
-  console.log(data);
+//   console.log(data);
   data = data.filter(function(d){
     return d["LAST_TABLE_UPDATE"].length >= 1 && new Date(d["REQUESTED_DATE"]).getFullYear() >= 2022 && new Date(d["REQUESTED_DATE"]).getMonth() <= 5;
   }); //removes poorly stored data that is missing columns
-  console.log(data);
+//   console.log(data);
 
   count = count - data.length; //stores number of missing data, still need to display somewhere
   document.getElementById("count").innerHTML = " Missing Data: " + count; //can change display if we want
@@ -162,10 +162,10 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
 
     // Timeline  
-    timeline = new LineChart({
+    timeline = new FocusContextVis({
         'parentElement': '#linechart',
-        'containerHeight': heightitem,
-        'containerWidth': window.innerWidth - 30,
+        'height': heightitem,
+        'width': window.innerWidth - 30,
     }, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
     timeline.updateVis();
 
