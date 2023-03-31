@@ -226,14 +226,14 @@ class Barchart {
             // "Calls By Zipcode"
             else if (vis.title == "Major Categories"){
                 //already has wednesday
-                const isActive = codeFilter.includes(d[0]);
+                const isActive = serviceFilter.includes(d[0]);
                 if (isActive) {
                     //weekday.findIndex(d[0])
-                    codeFilter = codeFilter.filter(f => f !== d[0]); // Remove from filter
+                    serviceFilter = serviceFilter.filter(f => f !== d[0]); // Remove from filter
                     d3.select(event.currentTarget).style("stroke", "none");
                     //^CSS, change as we see fit
                 } else {
-                    codeFilter.push(d[0]); // Add to filter
+                    serviceFilter.push(d[0]); // Add to filter
                     d3.select(event.currentTarget).style("stroke", "#000000").style("stroke-width", 3);
                     //^CSS, change as we see fit
                 }
