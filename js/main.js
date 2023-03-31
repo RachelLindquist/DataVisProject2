@@ -172,7 +172,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       'reverseOrder': true,
       // 'yScaleLog': false
       'colors' : ['#FF5733', ' #900C3F']
-      }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"Zip Code","Times Called",data); 
+      }, getNumberOfThings(data,"ZIPCODE"), "Calls By Zipcode", true,"ZIP Code","Times Called",data); 
     zipChart.updateVis();
 
 
@@ -189,7 +189,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
         'containerHeight': heightitem,
         'containerWidth': window.innerWidth - 15,
         'colorScale': ctColors,
-        }, getScatter(data), 'Recived vs Updated', "Recived", "Process time", "code");
+        }, getScatter(data), 'Received vs Updated', "Received", "Process time", "code");
     scatterplot.updateVis();
 
 
@@ -204,6 +204,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
       //except this
       d3.select(this).classed('inactive', !d3.select(this).classed('inactive'));
       d3.select("#legend").selectAll("*").remove();
+      d3.select("#legend2").selectAll("*").remove();
       // Filter data accordingly and update vis
       let callT = document.getElementById("callT");
       let procT = document.getElementById("procT");
@@ -404,6 +405,13 @@ function legend({
     .style("overflow", "visible")
     .style("display", "block");
 
+  const svg2 = d3.select("#legend2")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", [0, 0, width, height])
+    .style("overflow", "visible")
+    .style("display", "block");
+
   let tickAdjust = g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
   let x;
 
@@ -414,6 +422,14 @@ function legend({
     x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginLeft, width - marginRight), n));
 
     svg.append("image")
+      .attr("x", marginLeft)
+      .attr("y", marginTop)
+      .attr("width", width - marginLeft - marginRight)
+      .attr("height", height - marginTop - marginBottom)
+      .attr("preserveAspectRatio", "none")
+      .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
+    
+    svg2.append("image")
       .attr("x", marginLeft)
       .attr("y", marginTop)
       .attr("width", width - marginLeft - marginRight)
@@ -432,6 +448,14 @@ function legend({
       });
 
     svg.append("image")
+      .attr("x", marginLeft)
+      .attr("y", marginTop)
+      .attr("width", width - marginLeft - marginRight)
+      .attr("height", height - marginTop - marginBottom)
+      .attr("preserveAspectRatio", "none")
+      .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+
+    svg2.append("image")
       .attr("x", marginLeft)
       .attr("y", marginTop)
       .attr("width", width - marginLeft - marginRight)
@@ -476,6 +500,16 @@ function legend({
       .attr("width", (d, i) => x(i) - x(i - 1))
       .attr("height", height - marginTop - marginBottom)
       .attr("fill", d => d);
+    
+    svg2.append("g")
+      .selectAll("rect")
+      .data(color.range())
+      .join("rect")
+      .attr("x", (d, i) => x(i - 1))
+      .attr("y", marginTop)
+      .attr("width", (d, i) => x(i) - x(i - 1))
+      .attr("height", height - marginTop - marginBottom)
+      .attr("fill", d => d);
 
     tickValues = d3.range(thresholds.length);
     tickFormat = i => thresholdFormat(thresholds[i], i);
@@ -488,6 +522,16 @@ function legend({
       .rangeRound([marginLeft, width - marginRight]);
 
     svg.append("g")
+      .selectAll("rect")
+      .data(color.domain())
+      .join("rect")
+      .attr("x", x)
+      .attr("y", marginTop)
+      .attr("width", Math.max(0, x.bandwidth() - 1))
+      .attr("height", height - marginTop - marginBottom)
+      .attr("fill", color);
+
+    svg2.append("g")
       .selectAll("rect")
       .data(color.domain())
       .join("rect")
@@ -517,7 +561,27 @@ function legend({
       .attr("text-anchor", "start")
       .attr("font-weight", "bold")
       .text(title));
+    
+  svg2.append("g")
+      .attr("transform", `translate(0,${height - marginBottom})`)
+      .call(d3.axisBottom(x)
+        .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
+        .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
+        .tickSize(tickSize)
+        .tickValues(tickValues))
+        .attr("font-size", "8px")
+      .call(tickAdjust)
+      .call(g => g.select(".domain").remove())
+      .call(g => g.append("text")
+        .attr("x", marginLeft)
+        .attr("y", marginTop + marginBottom - height - 6)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "start")
+        .attr("font-weight", "bold")
+        .text(title));
+  
 
+  return svg2.node();
   return svg.node();
 }
 
