@@ -19,10 +19,12 @@
 }
 
 .color.inactive {
-  color:rgb(92 92 92);
+  color:rgb(240, 240, 240);
+  background-color:rgb(39, 39, 39);
 }
 .map.inactive{
-  color:rgb(92 92 92);
+  color:rgb(240, 240, 240);
+  background-color:rgb(39, 39, 39);
 }
 
 
