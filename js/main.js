@@ -65,18 +65,12 @@ d3.tsv('data/Cincy311_2022_final.tsv')
   
   //Process Time
   let ptList = [...new Set(data.map(d => d.process))];
-  if (ptList.length > 13) {
-    ptList = ptList.slice(0,12);
-  }
   const  ptColors= d3.scaleOrdinal()
   .domain(ptList)
   .range(d3.quantize(d3.interpolateHcl("#06aa06", "#dd0606"), ptList.length));
 
   //Call Date
   let cdList = [...new Set(data.map(d => d["REQUESTED_DATETIME"]))];
-  if (cdList.length > 13) {
-    cdList = cdList.slice(0,12);
-  }
   const  cdColors= d3.scaleOrdinal()
   .domain(cdList)
   .range(d3.quantize(d3.interpolateHcl("#483248", "#39a78e"), cdList.length));
@@ -233,7 +227,7 @@ d3.tsv('data/Cincy311_2022_final.tsv')
         leafletMap.changeColors(cdColors, "REQUESTED_DATETIME");
         scatterplot.changeColors(cdColors, "request");
         l = legend({
-          color: cdColors, //d3.scaleSequential(cdColors.domain(), cdColors.range()),//d3.interpolateHcl("#FFC300", "#2A4858")),//ctColors,
+          color: d3.scaleThreshold(["1/1/2022", "2/1/2022", "3/1/2022", "4/1/2022", "5/1/2022","6/1/2022"], d3.quantize(d3.interpolateHcl("#483248", "#39a78e"), 6)),//cdColors, //d3.scaleSequential(cdColors.domain(), cdColors.range()),//d3.interpolateHcl("#FFC300", "#2A4858")),//ctColors,
           title: "Legend"
         })
       } else { //pubA
