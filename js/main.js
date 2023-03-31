@@ -2,6 +2,7 @@
 let weekFilter = [];
 let serviceFilter = [];
 let zipFilter = [];
+let brushFilter = [];
 let data, leafletMap;
 let zipChart, dayChart, serviceChart;
 
@@ -170,11 +171,11 @@ d3.tsv('data/Cincy311_2022_final.tsv')
 
 
     // Timeline  
-    timeline = new FocusContextVis({
+    timeline = new LineChart({
         'parentElement': '#linechart',
-        'height': heightitem,
-        'width': window.innerWidth - 30,
-    }, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline');
+        'containerHeight': heightitem,
+        'containerWidth': window.innerWidth - 30,
+    }, getNumberOfThingsDate(data, 'REQUESTED_DATETIME'), 'Date', 'Number of calls', 'Timeline', data);
     timeline.updateVis();
 
     scatterplot = new Scatterplot({ 
@@ -263,6 +264,24 @@ function filterData(workingData){
     leafletMap.data = leafletMap.data.filter(d => zipFilter.includes(d["ZIPCODE"])); 
   }
 
+  //brushing
+//   if (brushFilter.length != 0) {
+//     console.log(brushFilter[0]);
+//     // Rollup data to get counts of calls per day
+//     // leafletMap.data = leafletMap.data.filter(d => {
+//     //     return (
+//     //         vis.data.timeBounds[0] <= vis.data.parseTime(d.REQUESTED_DATETIME) 
+//     //         && vis.data.parseTime(d.REQUESTED_DATETIME) <= vis.data.timeBounds[1]
+//     //     )
+//     // });
+    
+//     // leafletMap.data = leafletMap.data.filter(d => (new Date(d["REQUESTED_DATE"]) >= brushFilter[0]));
+//     // data = data.filter(function(d){
+//     //     return d["LAST_TABLE_UPDATE"].length >= 1 && new Date(d["REQUESTED_DATE"]).getFullYear() >= 2022 && new Date(d["REQUESTED_DATE"]).getMonth() <= 5;
+//     //   });
+//   }
+  
+//   console.log(leafletMap.data)
 
   dayChart.data = getDayOWeek(leafletMap.data);
   serviceChart.data = getNumberOfThings(leafletMap.data,"SERVICE_CODE");

@@ -224,13 +224,13 @@ class Scatterplot {
           d3.select('#tooltip').style('opacity', 0);//turn off the tooltip
         })
 
-    vis.chart.selectAll('.text')
-        .data(vis.data, d => d.name)
-        .join('text')
-        .attr('class',"scatter_text")
-        .text(d => d.label)
-        .attr('x', d => vis.xScale(vis.xValue(d)) + d.labelXOffset)
-        .attr('y', d => vis.yScale(vis.yValue(d)) + d.labelYOffset)
+    // vis.chart.selectAll('.text')
+    //     .data(vis.data, d => d.name)
+    //     .join('text')
+    //     .attr('class',"scatter_text")
+    //     .text(d => d.label)
+    //     .attr('x', d => vis.xScale(vis.xValue(d)) + d.labelXOffset)
+    //     .attr('y', d => vis.yScale(vis.yValue(d)) + d.labelYOffset)
         // .attr('fill','#ea00d9');
     
     // Update the axes/gridlines
