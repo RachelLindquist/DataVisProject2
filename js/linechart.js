@@ -1,6 +1,6 @@
 class LineChart {
 
-    constructor(_config, _data, _xAxisName, _yAxisName, _title) {
+    constructor(_config, _data, _xAxisName, _yAxisName, _title, _ALLDATA) {
       this.config = {
         parentElement: _config.parentElement,
         containerWidth: _config.containerWidth || 600,

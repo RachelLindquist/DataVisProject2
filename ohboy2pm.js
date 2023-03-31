@@ -4,7 +4,7 @@ class FocusContextVis {
      * @param {Object}
      * @param {Array}
      */
-    constructor(_config, _data) {
+    constructor(_config, _data, _xAxisName, _yAxisName, _title, _ALLDATA) {
       this.config = {
         parentElement: _config.parentElement,
         containerWidth: _config.containerWidth || 600,
@@ -14,6 +14,8 @@ class FocusContextVis {
         contextMargin: { top: 280, right: 10, bottom: 20, left: 45 }
       };
       this.data = _data;
+      this.ALLDATA = _ALLDATA;
+      this.notfirst = false;
       this.initVis();
     }
   
@@ -123,6 +125,8 @@ class FocusContextVis {
         })
         .on("end", function ({ selection }) {
           if (!selection) vis.brushed(null);
+          if (vis.notfirst){filterData(vis.ALLDATA);}
+          vis.notfirst = false;
         });
     }
   
@@ -212,12 +216,12 @@ class FocusContextVis {
   
       // Update the brush and define a default position
 
-      console.log()
       const defaultBrushSelection = [
         vis.xScaleFocus(vis.data[0][0]),
         vis.xScaleContext.range()[1]
       ];
-      vis.brushG.call(vis.brush).call(vis.brush.move, defaultBrushSelection);
+      vis.brushG.call(vis.brush).call(vis.brush.move,defaultBrushSelection);
+      vis.notfirst = true;
     }
   
     /**
@@ -225,6 +229,7 @@ class FocusContextVis {
      */
     brushed(selection) {
       let vis = this;
+      brushFilter = [];
   
       // Check if the brush is still active or if it has been removed
       if (selection) {
@@ -236,11 +241,19 @@ class FocusContextVis {
   
         // Update x-scale of the focus view accordingly
         vis.xScaleFocus.domain(selectedDomain);
+        // console.log(selectedDomain)
+
+        brushFilter.push(selectedDomain); // Add to filter
+        // filterData(vis.ALLDATA);
+               
       } else {
         // Reset x-scale of the focus view (full time period)
         vis.xScaleFocus.domain(vis.xScaleContext.domain());
       }
-  
+
+      // i hate you brushing
+    //   if (vis.notfirst){filterData(vis.ALLDATA);}
+      
       // Redraw line and update x-axis labels in focus view
       vis.focusLinePath.attr("d", vis.line);
       vis.xAxisFocusG.call(vis.xAxisFocus);
